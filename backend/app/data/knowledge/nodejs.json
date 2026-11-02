@@ -1,0 +1,90 @@
+[
+  {
+    "skill": "Node.js",
+    "topic": "Event Loop and Non-Blocking I/O",
+    "difficulty": "intermediate",
+    "concepts": ["event loop phases", "libuv", "non-blocking I/O", "callbacks vs Promises", "setImmediate vs process.nextTick", "I/O-bound vs CPU-bound"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["blocking event loop with synchronous fs operations", "CPU-intensive tasks on main thread", "callback hell"],
+    "source_name": "Node.js Official Documentation",
+    "source_url": "https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick",
+    "tags": ["event-loop", "non-blocking", "async", "libuv"]
+  },
+  {
+    "skill": "Node.js",
+    "topic": "Modules — CommonJS and ESM",
+    "difficulty": "beginner",
+    "concepts": ["require() / module.exports", "ES module import/export", "module caching", "circular dependencies", "__dirname and __filename"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["mixing CJS and ESM in same project", "assuming modules reload on require (they are cached)", "relative vs absolute import paths"],
+    "source_name": "Node.js Official Documentation",
+    "source_url": "https://nodejs.org/api/modules.html",
+    "tags": ["modules", "CommonJS", "ESM"]
+  },
+  {
+    "skill": "Node.js",
+    "topic": "Streams and Buffers",
+    "difficulty": "advanced",
+    "concepts": ["Readable, Writable, Duplex, Transform streams", "pipe()", "backpressure", "Buffer class", "streaming large files", "chunk processing"],
+    "question_types": ["conceptual", "scenario", "practical"],
+    "common_mistakes": ["loading entire file into memory instead of streaming", "not handling backpressure", "forgetting to end writable streams"],
+    "source_name": "Node.js Official Documentation",
+    "source_url": "https://nodejs.org/api/stream.html",
+    "tags": ["streams", "buffers", "I/O", "performance"]
+  },
+  {
+    "skill": "Node.js",
+    "topic": "HTTP Server and REST API Design",
+    "difficulty": "intermediate",
+    "concepts": ["http.createServer", "request/response cycle", "middleware pattern", "REST methods GET/POST/PUT/DELETE", "status codes", "headers"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["not ending the response", "improper error handling in routes", "synchronous operations blocking request handling"],
+    "source_name": "Node.js Official Documentation",
+    "source_url": "https://nodejs.org/api/http.html",
+    "tags": ["HTTP", "REST", "server", "API"]
+  },
+  {
+    "skill": "Node.js",
+    "topic": "Express.js Middleware and Routing",
+    "difficulty": "intermediate",
+    "concepts": ["middleware stack", "next()", "router", "error-handling middleware", "body parsing", "CORS", "express.Router"],
+    "question_types": ["practical", "debugging", "scenario"],
+    "common_mistakes": ["not calling next() causing hanging requests", "middleware order", "not handling async errors in middleware"],
+    "source_name": "Express.js Documentation",
+    "source_url": "https://expressjs.com/en/guide/routing.html",
+    "tags": ["express", "middleware", "routing"]
+  },
+  {
+    "skill": "Node.js",
+    "topic": "Authentication and Security",
+    "difficulty": "intermediate",
+    "concepts": ["JWT authentication", "session management", "bcrypt hashing", "rate limiting", "helmet.js security headers", "OWASP top 10 in Node context"],
+    "question_types": ["conceptual", "scenario", "practical"],
+    "common_mistakes": ["storing plain-text passwords", "not validating JWT expiry", "exposing sensitive data in error responses"],
+    "source_name": "Node.js Official Documentation — Security",
+    "source_url": "https://nodejs.org/en/docs/guides/security/",
+    "tags": ["security", "JWT", "authentication", "bcrypt"]
+  },
+  {
+    "skill": "Node.js",
+    "topic": "Performance and Clustering",
+    "difficulty": "advanced",
+    "concepts": ["cluster module", "worker_threads", "PM2 process manager", "memory usage optimisation", "profiling with --inspect", "child_process"],
+    "question_types": ["scenario", "advanced"],
+    "common_mistakes": ["running single-threaded for CPU-bound tasks", "memory leaks from uncleaned listeners", "not monitoring memory/CPU in production"],
+    "source_name": "Node.js Official Documentation",
+    "source_url": "https://nodejs.org/api/cluster.html",
+    "tags": ["performance", "clustering", "worker-threads", "PM2"]
+  },
+  {
+    "skill": "Node.js",
+    "topic": "Package Management and npm",
+    "difficulty": "beginner",
+    "concepts": ["package.json", "npm install", "devDependencies vs dependencies", "package-lock.json", "npx", "semver versioning", "npm scripts"],
+    "question_types": ["practical", "conceptual"],
+    "common_mistakes": ["committing node_modules", "wildcard versions causing breaking changes", "missing lock file in production"],
+    "source_name": "npm Documentation",
+    "source_url": "https://docs.npmjs.com/",
+    "tags": ["npm", "package-management", "dependencies"]
+  }
+]

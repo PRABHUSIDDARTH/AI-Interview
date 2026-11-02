@@ -1,0 +1,90 @@
+[
+  {
+    "skill": "PostgreSQL",
+    "topic": "SQL Fundamentals — SELECT and Filtering",
+    "difficulty": "beginner",
+    "concepts": ["SELECT, FROM, WHERE", "comparison operators", "LIKE, IN, BETWEEN", "NULL handling (IS NULL / IS NOT NULL)", "ORDER BY, LIMIT, OFFSET"],
+    "question_types": ["practical", "conceptual"],
+    "common_mistakes": ["NULL comparisons with =", "ORDER BY without LIMIT in pagination", "LIKE with no wildcard"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/sql-select.html",
+    "tags": ["SQL", "SELECT", "filtering", "basics"]
+  },
+  {
+    "skill": "PostgreSQL",
+    "topic": "Joins",
+    "difficulty": "intermediate",
+    "concepts": ["INNER JOIN", "LEFT/RIGHT OUTER JOIN", "FULL OUTER JOIN", "CROSS JOIN", "self join", "join conditions", "Cartesian product"],
+    "question_types": ["conceptual", "practical", "scenario"],
+    "common_mistakes": ["accidental Cartesian product", "joining on non-indexed foreign key", "using subquery when JOIN is more efficient"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/queries-table-expressions.html",
+    "tags": ["joins", "relational", "SQL"]
+  },
+  {
+    "skill": "PostgreSQL",
+    "topic": "Indexes and Query Performance",
+    "difficulty": "intermediate",
+    "concepts": ["B-tree index", "GiST / GIN indexes", "partial indexes", "covering indexes", "EXPLAIN ANALYZE", "index selectivity", "over-indexing"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["index on low-cardinality column", "not using EXPLAIN before optimising", "index not used due to function wrapping"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/indexes.html",
+    "tags": ["indexes", "performance", "EXPLAIN", "query-optimisation"]
+  },
+  {
+    "skill": "PostgreSQL",
+    "topic": "Transactions and ACID",
+    "difficulty": "intermediate",
+    "concepts": ["BEGIN / COMMIT / ROLLBACK", "ACID properties", "isolation levels", "dirty reads / phantom reads", "SAVEPOINT", "deadlocks"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["long-running transactions holding locks", "not handling deadlock retries", "wrong isolation level for use case"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+    "tags": ["transactions", "ACID", "isolation", "deadlocks"]
+  },
+  {
+    "skill": "PostgreSQL",
+    "topic": "Aggregations and Window Functions",
+    "difficulty": "intermediate",
+    "concepts": ["GROUP BY", "HAVING", "COUNT/SUM/AVG/MAX/MIN", "window functions OVER(PARTITION BY)", "RANK(), ROW_NUMBER()", "CTEs (WITH clause)"],
+    "question_types": ["practical", "scenario", "advanced"],
+    "common_mistakes": ["WHERE vs HAVING for aggregated conditions", "GROUP BY all non-aggregate columns", "expensive window functions on large datasets"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/functions-aggregate.html",
+    "tags": ["aggregation", "GROUP BY", "window-functions", "CTE"]
+  },
+  {
+    "skill": "PostgreSQL",
+    "topic": "Schema Design and Normalization",
+    "difficulty": "intermediate",
+    "concepts": ["1NF, 2NF, 3NF", "primary and foreign keys", "referential integrity", "data types selection", "denormalization trade-offs", "constraints: UNIQUE, CHECK, NOT NULL"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["storing comma-separated values instead of normalised table", "overusing JSON columns", "missing foreign key constraints"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/ddl.html",
+    "tags": ["schema", "normalization", "design", "constraints"]
+  },
+  {
+    "skill": "PostgreSQL",
+    "topic": "Stored Procedures and Functions",
+    "difficulty": "advanced",
+    "concepts": ["PL/pgSQL", "CREATE FUNCTION", "CREATE PROCEDURE", "triggers", "RAISE NOTICE/EXCEPTION", "transaction control in procedures"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["overusing stored procedures (maintainability)", "security definer risks", "not handling exceptions in PL/pgSQL"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/plpgsql.html",
+    "tags": ["stored-procedures", "functions", "triggers", "PL/pgSQL"]
+  },
+  {
+    "skill": "PostgreSQL",
+    "topic": "Connection Pooling and Performance",
+    "difficulty": "advanced",
+    "concepts": ["connection pool (PgBouncer)", "max_connections setting", "connection overhead", "query caching", "VACUUM / ANALYZE", "autovacuum"],
+    "question_types": ["scenario", "advanced"],
+    "common_mistakes": ["too many connections exhausting PostgreSQL", "not running VACUUM on write-heavy tables", "disabling autovacuum"],
+    "source_name": "PostgreSQL Official Documentation",
+    "source_url": "https://www.postgresql.org/docs/current/runtime-config-connection.html",
+    "tags": ["connection-pooling", "PgBouncer", "VACUUM", "performance"]
+  }
+]

@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai_interview_backend
+    restart: unless-stopped
+    environment:
+      - PROJECT_NAME=${PROJECT_NAME:-AI Interview Simulator}
+      - API_V1_STR=${API_V1_STR:-/api/v1}
+      - SECRET_KEY=${SECRET_KEY:-local_development_only_secret_key_1234567890}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:////app/data/sql_app.db}
+      - AI_PROVIDER=${AI_PROVIDER:-mock}
+      - AI_API_KEY=${AI_API_KEY:-}
+      - AI_MODEL=${AI_MODEL:-}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:80,http://localhost:5173}
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
+    container_name: ai_interview_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/nginx-health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Optional PostgreSQL database service (enabled via DATABASE_URL or docker compose profiles)
+  db:
+    image: postgres:15-alpine
+    container_name: ai_interview_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_interview}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - postgres
+
+volumes:
+  backend_data:
+  postgres_data:

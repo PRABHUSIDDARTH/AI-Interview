@@ -1,79 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import GlassCard from '../components/GlassCard';
+import Button from '../components/Button';
+import {
+  IconArrowLeft,
+  IconProfile,
+  IconShield,
+  IconCheck,
+  IconLock,
+} from '../components/Icons';
 
-/* ── Simple inline alert ──────────────────────────────────── */
-function Alert({ type, message }) {
-  if (!message) return null;
-  const styles = {
-    success: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
-    error:   'bg-rose-500/10 border-rose-500/30 text-rose-400',
-  };
-  return (
-    <div className={`border rounded-xl px-5 py-3 text-sm ${styles[type]}`}>
-      {message}
-    </div>
-  );
-}
-
-/* ── Section card wrapper ─────────────────────────────────── */
-function Card({ title, icon, children }) {
-  return (
-    <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-      <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/50 flex items-center gap-3">
-        <span className="text-emerald-400">{icon}</span>
-        <h2 className="text-base font-semibold text-white">{title}</h2>
-      </div>
-      <div className="p-6">{children}</div>
-    </div>
-  );
-}
-
-/* ── Input field ──────────────────────────────────────────── */
-function Field({ id, label, type = 'text', value, onChange, placeholder, disabled, hint }) {
-  return (
-    <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-300">
-        {label}
-      </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        disabled={disabled}
-        className="w-full px-4 py-2.5 rounded-xl bg-slate-800/70 text-slate-100 border border-slate-700 placeholder-slate-500
-                   focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50
-                   disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-      />
-      {hint && <p className="text-xs text-slate-500">{hint}</p>}
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════════════ */
 export default function ProfilePage() {
   const navigate = useNavigate();
 
   /* profile data */
-  const [user, setUser]         = useState(null);
-  const [loading, setLoading]   = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
 
   /* name form */
-  const [fullName, setFullName]       = useState('');
+  const [fullName, setFullName] = useState('');
   const [nameLoading, setNameLoading] = useState(false);
-  const [nameMsg, setNameMsg]         = useState({ type: '', text: '' });
+  const [nameMsg, setNameMsg] = useState({ type: '', text: '' });
 
   /* password form */
   const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword]         = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [pwLoading, setPwLoading]             = useState(false);
-  const [pwMsg, setPwMsg]                     = useState({ type: '', text: '' });
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwMsg, setPwMsg] = useState({ type: '', text: '' });
 
-  /* ── Load user profile on mount ─────────────────────── */
+  /* Load user profile on mount */
   useEffect(() => {
     (async () => {
       try {
@@ -89,7 +47,7 @@ export default function ProfilePage() {
     })();
   }, [navigate]);
 
-  /* ── Update display name ─────────────────────────────── */
+  /* Update display name */
   const handleNameSave = async (e) => {
     e.preventDefault();
     setNameMsg({ type: '', text: '' });
@@ -107,7 +65,7 @@ export default function ProfilePage() {
     }
   };
 
-  /* ── Change password ─────────────────────────────────── */
+  /* Change password */
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setPwMsg({ type: '', text: '' });
@@ -137,31 +95,28 @@ export default function ProfilePage() {
     }
   };
 
-  /* ── Loading / error states ─────────────────────────── */
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-        <div className="w-10 h-10 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" />
-        <p className="text-slate-400 text-sm">Loading your profile…</p>
+        <div className="w-12 h-12 rounded-full border-2 border-primary-500/30 border-t-primary-500 animate-spin" />
+        <p className="text-slate-400 text-sm">Loading user profile...</p>
       </div>
     );
   }
 
   if (loadError) {
     return (
-      <div className="max-w-xl mx-auto mt-16 text-center space-y-4">
-        <p className="text-rose-400">{loadError}</p>
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-colors"
-        >
-          Back to Dashboard
-        </button>
+      <div className="max-w-xl mx-auto mt-12 text-center space-y-4">
+        <GlassCard className="p-8 space-y-4">
+          <p className="text-rose-400 text-sm">{loadError}</p>
+          <Button onClick={() => navigate('/dashboard')} variant="primary">
+            Return to Dashboard
+          </Button>
+        </GlassCard>
       </div>
     );
   }
 
-  /* ── Initials avatar ─────────────────────────────────── */
   const initials = (user?.full_name || user?.email || 'U')
     .split(' ')
     .map((w) => w[0])
@@ -170,155 +125,205 @@ export default function ProfilePage() {
     .toUpperCase();
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 pb-16">
-      {/* Back link */}
+    <div className="max-w-3xl mx-auto space-y-8 pb-16">
+      {/* Top Navigation */}
       <button
         onClick={() => navigate('/dashboard')}
-        className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm group"
+        className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors group"
       >
-        <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Dashboard
+        <IconArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        <span>Back to Dashboard</span>
       </button>
 
-      {/* ── Profile header ─────────────────────────────── */}
-      <div className="bg-gradient-to-br from-slate-900/90 via-slate-800/60 to-emerald-900/20 border border-slate-700/50 rounded-2xl p-8 backdrop-blur-sm flex items-center gap-6">
-        {/* Avatar */}
-        <div className="w-20 h-20 rounded-full bg-emerald-600/20 border-2 border-emerald-500/40 flex items-center justify-center flex-shrink-0">
-          <span className="text-2xl font-bold text-emerald-400">{initials}</span>
+      {/* Header Profile Badge Card */}
+      <GlassCard className="p-8 flex flex-col sm:flex-row items-center gap-6 bg-gradient-to-r from-primary-600/10 via-transparent to-transparent border-primary-500/20">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-primary-600 to-accent-purple flex items-center justify-center font-extrabold text-2xl text-white flex-shrink-0 shadow-glow-primary ring-4 ring-primary-500/20">
+          {initials}
         </div>
-        <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-white truncate">
-            {user?.full_name || 'No display name set'}
+        <div className="space-y-1 text-center sm:text-left min-w-0 flex-1">
+          <h1 className="text-2xl font-extrabold tracking-tight text-white truncate">
+            {user?.full_name || 'User Profile'}
           </h1>
-          <p className="text-slate-400 text-sm mt-1 truncate">{user?.email}</p>
-          <span className={`mt-2 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold border ${user?.is_active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
-            {user?.is_active ? 'Active' : 'Inactive'}
-          </span>
+          <p className="text-sm text-slate-400 font-mono truncate">{user?.email}</p>
+          <div className="pt-2">
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+              user?.is_active
+                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_12px_rgba(34,197,94,0.15)]'
+                : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${user?.is_active ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+              {user?.is_active ? 'Account Active & Verified' : 'Account Inactive'}
+            </span>
+          </div>
         </div>
-      </div>
+      </GlassCard>
 
-      {/* ── Update display name ────────────────────────── */}
-      <Card
-        title="Display Name"
-        icon={
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-        }
-      >
+      {/* Display Name Section */}
+      <GlassCard className="space-y-6 p-6">
+        <div className="flex items-center gap-3 border-b border-white/[0.08] pb-4">
+          <div className="p-2 rounded-xl bg-primary-600/20 text-primary-400">
+            <IconProfile className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-white">Personal Information</h2>
+            <p className="text-xs text-slate-400">Update your public display name</p>
+          </div>
+        </div>
+
         <form onSubmit={handleNameSave} className="space-y-4">
-          <Field
-            id="full-name"
-            label="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="e.g., Alex Smith"
-            disabled={nameLoading}
-            hint="This name appears across your dashboard and reports."
-          />
-          <Alert type={nameMsg.type} message={nameMsg.text} />
+          <div>
+            <label htmlFor="full-name" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+              Full Display Name
+            </label>
+            <input
+              id="full-name"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="e.g. Alex Smith"
+              disabled={nameLoading}
+              className="w-full px-4 py-2.5 rounded-xl glass-input text-sm placeholder-slate-500"
+            />
+            <p className="text-[11px] text-slate-500 mt-1">This name will be displayed across evaluation reports.</p>
+          </div>
+
+          {nameMsg.text && (
+            <div className={`p-3 rounded-xl text-xs font-medium border ${
+              nameMsg.type === 'success'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            }`}>
+              {nameMsg.text}
+            </div>
+          )}
+
           <div className="flex justify-end">
-            <button
+            <Button
               id="btn-save-name"
               type="submit"
-              disabled={nameLoading}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-600/40 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-600/20"
+              loading={nameLoading}
+              variant="primary"
+              size="sm"
+              className="shadow-glow-primary"
             >
-              {nameLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Saving…
-                </>
-              ) : 'Save Name'}
-            </button>
+              Save Name Changes
+            </Button>
           </div>
         </form>
-      </Card>
+      </GlassCard>
 
-      {/* ── Account info (read-only) ───────────────────── */}
-      <Card
-        title="Account Information"
-        icon={
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        }
-      >
-        <div className="space-y-4">
-          <Field
-            id="profile-email"
-            label="Email Address"
-            value={user?.email || ''}
-            onChange={() => {}}
-            disabled
-            hint="Email cannot be changed. Contact support if needed."
-          />
+      {/* Account Info Readonly */}
+      <GlassCard className="space-y-4 p-6">
+        <div className="flex items-center gap-3 border-b border-white/[0.08] pb-4">
+          <div className="p-2 rounded-xl bg-accent-cyan/20 text-accent-cyan">
+            <IconShield className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-white">Account Details</h2>
+            <p className="text-xs text-slate-400">Primary authentication credentials</p>
+          </div>
         </div>
-      </Card>
 
-      {/* ── Change password ────────────────────────────── */}
-      <Card
-        title="Change Password"
-        icon={
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        }
-      >
+        <div className="space-y-2">
+          <label htmlFor="profile-email" className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Email Address
+          </label>
+          <input
+            id="profile-email"
+            type="email"
+            value={user?.email || ''}
+            disabled
+            readOnly
+            className="w-full px-4 py-2.5 rounded-xl glass-input text-sm opacity-60 cursor-not-allowed font-mono"
+          />
+          <p className="text-[11px] text-slate-500">Your email address is your unique system identifier.</p>
+        </div>
+      </GlassCard>
+
+      {/* Security & Password */}
+      <GlassCard className="space-y-6 p-6">
+        <div className="flex items-center gap-3 border-b border-white/[0.08] pb-4">
+          <div className="p-2 rounded-xl bg-accent-purple/20 text-accent-purple">
+            <IconLock className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-white">Security & Password</h2>
+            <p className="text-xs text-slate-400">Update your access password securely</p>
+          </div>
+        </div>
+
         <form onSubmit={handlePasswordChange} className="space-y-4">
-          <Field
-            id="current-password"
-            label="Current Password"
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            placeholder="Enter your current password"
-            disabled={pwLoading}
-          />
-          <Field
-            id="new-password"
-            label="New Password"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="At least 8 characters"
-            disabled={pwLoading}
-          />
-          <Field
-            id="confirm-password"
-            label="Confirm New Password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Re-enter new password"
-            disabled={pwLoading}
-          />
-          <Alert type={pwMsg.type} message={pwMsg.text} />
-          <div className="flex justify-end">
-            <button
+          <div>
+            <label htmlFor="current-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+              Current Password
+            </label>
+            <input
+              id="current-password"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Enter current password"
+              disabled={pwLoading}
+              className="w-full px-4 py-2.5 rounded-xl glass-input text-sm placeholder-slate-500"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="new-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                New Password
+              </label>
+              <input
+                id="new-password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Min 8 characters"
+                disabled={pwLoading}
+                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm placeholder-slate-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirm-password" className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                Confirm New Password
+              </label>
+              <input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter new password"
+                disabled={pwLoading}
+                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm placeholder-slate-500"
+              />
+            </div>
+          </div>
+
+          {pwMsg.text && (
+            <div className={`p-3 rounded-xl text-xs font-medium border ${
+              pwMsg.type === 'success'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            }`}>
+              {pwMsg.text}
+            </div>
+          )}
+
+          <div className="flex justify-end pt-2">
+            <Button
               id="btn-change-password"
               type="submit"
-              disabled={pwLoading || !currentPassword || !newPassword || !confirmPassword}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/40 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/20"
+              loading={pwLoading}
+              disabled={!currentPassword || !newPassword || !confirmPassword}
+              variant="cyan"
+              size="sm"
             >
-              {pwLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Updating…
-                </>
-              ) : 'Change Password'}
-            </button>
+              Update Password
+            </Button>
           </div>
         </form>
-      </Card>
+      </GlassCard>
     </div>
   );
 }

@@ -1,0 +1,46 @@
+[
+  {
+    "skill": "Spring",
+    "topic": "Spring Security Architecture and Authentication",
+    "difficulty": "intermediate",
+    "concepts": ["SecurityFilterChain", "AuthenticationProvider", "UserDetailsService", "JWT Token Validation Filter", "Password Hashing with BCrypt"],
+    "question_types": ["conceptual", "practical", "debugging", "scenario"],
+    "common_mistakes": ["Using deprecated WebSecurityConfigurerAdapter in modern Spring Security 6", "Permitting all endpoints unintentionally with bad antMatcher/requestMatcher ordering", "Storing plain text passwords instead of BCrypt hashes", "Ignoring stateless session creation policy when using JWTs"],
+    "source_name": "Spring Security Official Reference",
+    "source_url": "https://docs.spring.io/spring-security/reference/servlet/architecture.html",
+    "tags": ["spring-security", "security", "authentication", "jwt"]
+  },
+  {
+    "skill": "Spring",
+    "topic": "Spring Security Authorization and CORS/CSRF",
+    "difficulty": "intermediate",
+    "concepts": ["Method Security (@PreAuthorize)", "CSRF token management", "CORS filter configuration in Spring Security", "Role-based vs Authority-based access control"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["Disabling CSRF for stateful session-based web forms", "Misconfiguring CORS origins with wildcard allowCredentials", "Prefixing roles with 'ROLE_' inconsistently in @PreAuthorize"],
+    "source_name": "Spring Security Authorization Guide",
+    "source_url": "https://docs.spring.io/spring-security/reference/servlet/authorization/index.html",
+    "tags": ["spring-security", "authorization", "csrf", "cors"]
+  },
+  {
+    "skill": "Spring",
+    "topic": "Dependency Injection and Bean Lifecycle",
+    "difficulty": "beginner",
+    "concepts": ["Inversion of Control (IoC)", "ApplicationContext vs BeanFactory", "Bean Scopes (Singleton, Prototype)", "@Autowired vs Constructor Injection", "Lifecycle callbacks (@PostConstruct, @PreDestroy)"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["Field injection instead of constructor injection", "Circular dependencies between beans", "Misunderstanding singleton bean thread safety with mutable state"],
+    "source_name": "Spring Framework Documentation - Core Technologies",
+    "source_url": "https://docs.spring.io/spring-framework/reference/core/beans.html",
+    "tags": ["ioc", "dependency-injection", "beans", "lifecycle"]
+  },
+  {
+    "skill": "Spring",
+    "topic": "Spring Data JPA and Transactions",
+    "difficulty": "intermediate",
+    "concepts": ["Repository interfaces", "@Transactional propagation and isolation", "N+1 query problem and Join Fetch", "Entity Lifecycle and Dirty Checking", "Paging and Sorting"],
+    "question_types": ["conceptual", "practical", "debugging", "scenario"],
+    "common_mistakes": ["Calling self-invoked @Transactional methods bypassing proxy", "N+1 queries with Lazy loading", "Catching exceptions inside transactional boundary without rollback"],
+    "source_name": "Spring Data JPA Reference",
+    "source_url": "https://docs.spring.io/spring-data/jpa/reference/",
+    "tags": ["spring-data", "jpa", "hibernate", "transactions"]
+  }
+]

@@ -12,6 +12,9 @@ import uuid
 import tempfile
 import requests
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 BASE = "http://127.0.0.1:8000/api/v1"
 PASS = "\033[92mPASS\033[0m"
 FAIL = "\033[91mFAIL\033[0m"

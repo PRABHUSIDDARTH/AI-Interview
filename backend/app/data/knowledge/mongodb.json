@@ -1,0 +1,68 @@
+[
+  {
+    "skill": "MongoDB",
+    "topic": "Documents and Collections",
+    "difficulty": "beginner",
+    "concepts": ["document model", "BSON types", "collections vs tables", "ObjectId", "schema-less flexibility", "embedded vs referenced documents"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["embedding unbounded arrays", "using auto-increment IDs instead of ObjectId", "not planning for document growth"],
+    "source_name": "MongoDB Official Documentation",
+    "source_url": "https://www.mongodb.com/docs/manual/introduction/",
+    "tags": ["documents", "collections", "schema", "BSON"]
+  },
+  {
+    "skill": "MongoDB",
+    "topic": "CRUD Operations",
+    "difficulty": "beginner",
+    "concepts": ["insertOne/insertMany", "findOne/find with filter", "updateOne/updateMany with operators", "deleteOne/deleteMany", "upsert", "projection"],
+    "question_types": ["practical", "debugging"],
+    "common_mistakes": ["not using projection (fetching all fields)", "updateOne without $set (overwrites document)", "missing filter in updateMany"],
+    "source_name": "MongoDB Official Documentation",
+    "source_url": "https://www.mongodb.com/docs/manual/crud/",
+    "tags": ["CRUD", "find", "update", "delete"]
+  },
+  {
+    "skill": "MongoDB",
+    "topic": "Indexing and Query Performance",
+    "difficulty": "intermediate",
+    "concepts": ["single field index", "compound index", "text index", "TTL index", "explain()", "covered queries", "index selectivity"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["too many indexes slowing writes", "compound index field order", "not using explain() to verify index usage"],
+    "source_name": "MongoDB Official Documentation",
+    "source_url": "https://www.mongodb.com/docs/manual/indexes/",
+    "tags": ["indexes", "performance", "query-optimisation"]
+  },
+  {
+    "skill": "MongoDB",
+    "topic": "Aggregation Pipeline",
+    "difficulty": "intermediate",
+    "concepts": ["$match, $group, $project, $sort", "$lookup (join)", "$unwind", "$facet", "pipeline optimisation", "$addFields, $set"],
+    "question_types": ["practical", "scenario", "advanced"],
+    "common_mistakes": ["$match late in pipeline (should be first)", "not using indexes in aggregation", "$lookup on unindexed field"],
+    "source_name": "MongoDB Official Documentation",
+    "source_url": "https://www.mongodb.com/docs/manual/aggregation/",
+    "tags": ["aggregation", "pipeline", "$lookup", "group-by"]
+  },
+  {
+    "skill": "MongoDB",
+    "topic": "Data Modelling — Embedding vs Referencing",
+    "difficulty": "intermediate",
+    "concepts": ["one-to-one embedding", "one-to-many decisions", "many-to-many with references", "document growth limits", "atomic operations scope", "denormalization"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["embedding everything (document size limit 16MB)", "referencing everything (too many roundtrips)", "not considering access patterns"],
+    "source_name": "MongoDB Official Documentation",
+    "source_url": "https://www.mongodb.com/docs/manual/data-modeling/",
+    "tags": ["data-modelling", "embedding", "referencing"]
+  },
+  {
+    "skill": "MongoDB",
+    "topic": "Transactions and ACID",
+    "difficulty": "advanced",
+    "concepts": ["multi-document transactions", "session-based transactions", "read concern", "write concern", "replica set requirement", "performance trade-offs"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["assuming MongoDB transactions behave like SQL (performance cost)", "long transactions holding locks", "not handling transaction retries"],
+    "source_name": "MongoDB Official Documentation",
+    "source_url": "https://www.mongodb.com/docs/manual/core/transactions/",
+    "tags": ["transactions", "ACID", "replica-set"]
+  }
+]

@@ -1,0 +1,112 @@
+[
+  {
+    "skill": "JavaScript",
+    "topic": "Variables, Scope, and Hoisting",
+    "difficulty": "beginner",
+    "concepts": ["var, let, const", "function scope vs block scope", "hoisting", "temporal dead zone", "global scope"],
+    "question_types": ["conceptual", "debugging"],
+    "common_mistakes": ["using var in modern code causing unexpected hoisting", "accessing let/const before declaration (TDZ)", "global variable pollution"],
+    "source_name": "MDN Web Docs — JavaScript",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types",
+    "tags": ["scope", "hoisting", "variables"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "Closures and Lexical Scope",
+    "difficulty": "intermediate",
+    "concepts": ["closure definition", "lexical environment", "IIFE", "closure over loops", "module pattern via closure", "encapsulation"],
+    "question_types": ["conceptual", "debugging", "scenario"],
+    "common_mistakes": ["classic var in loop closure bug", "unintentional memory retention", "confusing closure with callback"],
+    "source_name": "MDN Web Docs — Closures",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures",
+    "tags": ["closures", "scope", "lexical-scope"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "Promises and Async/Await",
+    "difficulty": "intermediate",
+    "concepts": ["Promise states (pending/fulfilled/rejected)", "Promise.all / Promise.race / Promise.allSettled", "async/await syntax", "error handling with try/catch", "Promise chaining"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["unhandled promise rejections", "sequential awaits instead of Promise.all", "forgetting return in promise chain"],
+    "source_name": "MDN Web Docs — Promises",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "tags": ["promises", "async", "await", "asynchronous"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "Prototypes and Inheritance",
+    "difficulty": "intermediate",
+    "concepts": ["prototype chain", "Object.create", "ES6 class syntax (syntactic sugar)", "constructor functions", "__proto__ vs prototype", "hasOwnProperty"],
+    "question_types": ["conceptual", "advanced"],
+    "common_mistakes": ["modifying Object.prototype", "confusing prototype and __proto__", "not understanding class is just syntactic sugar"],
+    "source_name": "MDN Web Docs — Prototype",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes",
+    "tags": ["prototypes", "inheritance", "OOP"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "Event Loop, Call Stack, and Microtasks",
+    "difficulty": "advanced",
+    "concepts": ["call stack", "heap", "task queue (macrotasks)", "microtask queue (Promises)", "event loop cycle", "setTimeout vs Promise.resolve order"],
+    "question_types": ["conceptual", "debugging", "scenario"],
+    "common_mistakes": ["assuming synchronous execution order in async code", "blocking the event loop with heavy sync operations"],
+    "source_name": "MDN Web Docs — Event Loop",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop",
+    "tags": ["event-loop", "async", "concurrency", "microtasks"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "ES6+ Features",
+    "difficulty": "intermediate",
+    "concepts": ["destructuring", "spread/rest operators", "template literals", "arrow functions", "optional chaining (?.) ", "nullish coalescing (??)", "modules (import/export)"],
+    "question_types": ["practical", "conceptual"],
+    "common_mistakes": ["arrow functions losing 'this' context", "shallow copy with spread", "default import vs named import"],
+    "source_name": "MDN Web Docs — JavaScript",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+    "tags": ["ES6", "modern-js", "destructuring", "spread"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "this Keyword and Binding",
+    "difficulty": "intermediate",
+    "concepts": ["implicit binding", "explicit binding (call/apply/bind)", "new binding", "global/default binding", "arrow function this", "class field binding"],
+    "question_types": ["conceptual", "debugging"],
+    "common_mistakes": ["losing this in callbacks", "using arrow functions as object methods expecting dynamic this", "forgetting to bind in class components"],
+    "source_name": "MDN Web Docs — this",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this",
+    "tags": ["this", "binding", "context"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "DOM Manipulation and Web APIs",
+    "difficulty": "beginner",
+    "concepts": ["querySelector", "addEventListener", "event delegation", "createElement / appendChild", "fetch API", "localStorage / sessionStorage"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["direct DOM manipulation in frameworks", "memory leaks from unremoved event listeners", "synchronous XHR"],
+    "source_name": "MDN Web Docs — DOM",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model",
+    "tags": ["DOM", "web-apis", "events"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "Error Handling and Debugging",
+    "difficulty": "intermediate",
+    "concepts": ["try/catch/finally", "Error types (TypeError, ReferenceError, etc.)", "custom Error classes", "stack traces", "console debugging", "source maps"],
+    "question_types": ["practical", "debugging"],
+    "common_mistakes": ["empty catch blocks", "catching errors and not logging them", "throwing non-Error objects"],
+    "source_name": "MDN Web Docs — Error",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "tags": ["error-handling", "debugging", "try-catch"]
+  },
+  {
+    "skill": "JavaScript",
+    "topic": "Modules and Bundlers",
+    "difficulty": "intermediate",
+    "concepts": ["ES Modules (import/export)", "CommonJS (require/module.exports)", "dynamic import()", "tree shaking", "webpack / Vite / esbuild basics", "circular dependencies"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["mixing CommonJS and ES modules", "large bundle sizes", "not understanding tree shaking requirements"],
+    "source_name": "MDN Web Docs — Modules",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules",
+    "tags": ["modules", "bundlers", "webpack", "tree-shaking"]
+  }
+]

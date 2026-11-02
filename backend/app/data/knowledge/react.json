@@ -1,0 +1,167 @@
+[
+  {
+    "skill": "React",
+    "topic": "JSX and Components",
+    "difficulty": "beginner",
+    "concepts": ["JSX syntax", "functional components", "class components", "component composition", "rendering JSX"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["forgetting to return JSX", "using class instead of className", "multiple root elements without Fragment"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/learn/writing-markup-with-jsx",
+    "tags": ["jsx", "components", "syntax"]
+  },
+  {
+    "skill": "React",
+    "topic": "Props and Data Flow",
+    "difficulty": "beginner",
+    "concepts": ["props passing", "props drilling", "read-only props", "default props", "children prop"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["mutating props directly", "forgetting PropTypes validation", "excessive prop drilling"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/learn/passing-props-to-a-component",
+    "tags": ["props", "data-flow", "one-way-binding"]
+  },
+  {
+    "skill": "React",
+    "topic": "State with useState",
+    "difficulty": "beginner",
+    "concepts": ["state initialization", "setState function", "immutable state updates", "re-rendering trigger", "functional updates"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["mutating state directly", "stale state in closures", "calling setState in render", "too many useState calls"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/reference/react/useState",
+    "tags": ["hooks", "state", "useState"]
+  },
+  {
+    "skill": "React",
+    "topic": "Event Handling and Controlled Components",
+    "difficulty": "beginner",
+    "concepts": ["synthetic events", "controlled inputs", "event propagation", "preventDefault", "onChange handler"],
+    "question_types": ["practical", "debugging"],
+    "common_mistakes": ["using innerHTML instead of state", "not preventing default form submission", "incorrect event binding"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/learn/responding-to-events",
+    "tags": ["events", "forms", "controlled-components"]
+  },
+  {
+    "skill": "React",
+    "topic": "Conditional Rendering and Lists",
+    "difficulty": "beginner",
+    "concepts": ["ternary rendering", "short-circuit &&", "Array.map for lists", "unique keys", "key reconciliation"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["using array index as key", "returning nothing from map", "missing key prop warning"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/learn/conditional-rendering",
+    "tags": ["conditional-rendering", "lists", "keys"]
+  },
+  {
+    "skill": "React",
+    "topic": "useEffect and Side Effects",
+    "difficulty": "intermediate",
+    "concepts": ["side effects", "dependency array", "cleanup function", "async operations in effects", "running once on mount"],
+    "question_types": ["conceptual", "practical", "debugging", "scenario"],
+    "common_mistakes": ["missing dependencies causing stale closures", "infinite re-render loops", "not cleaning up subscriptions or timers", "directly async useEffect"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/reference/react/useEffect",
+    "tags": ["hooks", "useEffect", "lifecycle", "side-effects"]
+  },
+  {
+    "skill": "React",
+    "topic": "useRef and Refs",
+    "difficulty": "intermediate",
+    "concepts": ["DOM reference", "persisting values without re-render", "forwardRef", "useImperativeHandle", "uncontrolled components"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["overusing refs instead of state", "accessing ref before mount", "forgetting that ref change does not trigger re-render"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/reference/react/useRef",
+    "tags": ["hooks", "refs", "useRef", "DOM"]
+  },
+  {
+    "skill": "React",
+    "topic": "Context API and useContext",
+    "difficulty": "intermediate",
+    "concepts": ["React.createContext", "Provider", "Consumer", "useContext", "context vs props", "when to use context"],
+    "question_types": ["conceptual", "scenario", "practical"],
+    "common_mistakes": ["overusing Context causing unnecessary re-renders", "not memoizing context value", "deeply nested providers"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/reference/react/useContext",
+    "tags": ["context", "useContext", "state-management"]
+  },
+  {
+    "skill": "React",
+    "topic": "Custom Hooks",
+    "difficulty": "intermediate",
+    "concepts": ["extracting hook logic", "naming convention useSomething", "composing hooks", "reusability", "hook rules"],
+    "question_types": ["practical", "scenario", "advanced"],
+    "common_mistakes": ["calling hooks inside conditions", "not following naming convention", "recreating hooks that already exist"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/learn/reusing-logic-with-custom-hooks",
+    "tags": ["custom-hooks", "reusability", "composition"]
+  },
+  {
+    "skill": "React",
+    "topic": "Performance Optimisation — useMemo and useCallback",
+    "difficulty": "advanced",
+    "concepts": ["memoization", "useMemo for expensive computations", "useCallback for stable references", "React.memo", "referential equality"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["premature optimisation", "incorrect dependency arrays causing stale values", "memoizing everything without profiling"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/reference/react/useMemo",
+    "tags": ["performance", "useMemo", "useCallback", "memoization"]
+  },
+  {
+    "skill": "React",
+    "topic": "React Router v6",
+    "difficulty": "intermediate",
+    "concepts": ["BrowserRouter", "Routes and Route", "useNavigate", "useParams", "nested routes", "outlet", "protected routes"],
+    "question_types": ["practical", "scenario", "debugging"],
+    "common_mistakes": ["using history.push (v5 pattern)", "missing Outlet in nested routes", "incorrect path parameter access"],
+    "source_name": "React Router Documentation",
+    "source_url": "https://reactrouter.com/en/main",
+    "tags": ["routing", "react-router", "navigation", "SPA"]
+  },
+  {
+    "skill": "React",
+    "topic": "Error Boundaries",
+    "difficulty": "advanced",
+    "concepts": ["componentDidCatch", "static getDerivedStateFromError", "error isolation", "fallback UI", "when errors are not caught"],
+    "question_types": ["conceptual", "scenario", "debugging"],
+    "common_mistakes": ["trying to use functional Error Boundaries (only class components)", "not providing fallback UI", "swallowing errors silently"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary",
+    "tags": ["error-boundaries", "resilience", "error-handling"]
+  },
+  {
+    "skill": "React",
+    "topic": "Code Splitting and Lazy Loading",
+    "difficulty": "advanced",
+    "concepts": ["React.lazy", "Suspense", "dynamic import", "bundle splitting", "loading states"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["not providing Suspense fallback", "over-splitting small components", "server-side rendering incompatibility"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/reference/react/lazy",
+    "tags": ["lazy-loading", "code-splitting", "performance", "suspense"]
+  },
+  {
+    "skill": "React",
+    "topic": "Virtual DOM and Reconciliation",
+    "difficulty": "intermediate",
+    "concepts": ["virtual DOM diffing", "reconciliation algorithm", "Fiber architecture", "key role in lists", "batch updates"],
+    "question_types": ["conceptual", "advanced"],
+    "common_mistakes": ["assuming every setState causes a DOM update", "ignoring key uniqueness causing incorrect reconciliation"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/learn/preserving-and-resetting-state",
+    "tags": ["virtual-dom", "reconciliation", "fiber", "performance"]
+  },
+  {
+    "skill": "React",
+    "topic": "State Management Patterns",
+    "difficulty": "advanced",
+    "concepts": ["lifting state up", "reducer pattern useReducer", "Zustand / Redux patterns", "when to use global vs local state", "state colocation"],
+    "question_types": ["scenario", "advanced", "conceptual"],
+    "common_mistakes": ["storing derived state", "premature global state", "not normalising state shape"],
+    "source_name": "React Official Documentation",
+    "source_url": "https://react.dev/learn/managing-state",
+    "tags": ["state-management", "useReducer", "architecture"]
+  }
+]

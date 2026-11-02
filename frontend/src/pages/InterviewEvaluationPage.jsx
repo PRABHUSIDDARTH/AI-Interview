@@ -3,65 +3,103 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-// import html2pdf from 'html2pdf.js'; // removed unused
+import GlassCard from '../components/GlassCard';
+import Button from '../components/Button';
+import {
+  IconCheck,
+  IconArrowLeft,
+  IconArrowRight,
+  IconSparkles,
+  IconDownload,
+  IconRefresh,
+} from '../components/Icons';
 
-/* ── Score ring (SVG) ─────────────────────────────────────────── */
-function ScoreRing({ value, max = 10, size = 100 }) {
-  const radius = (size - 12) / 2;
+/* ── Score Ring SVG ────────────────────────────────────────── */
+function ScoreRing({ value, max = 10, size = 110 }) {
+  const radius = (size - 14) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / max) * circumference;
-  const color = value >= 7 ? '#10b981' : value >= 4 ? '#f59e0b' : '#ef4444';
+  const color = value >= 7 ? '#22C55E' : value >= 4 ? '#F59E0B' : '#EF4444';
+
   return (
-    <svg width={size} height={size} className="drop-shadow-lg">
-      <circle cx={size / 2} cy={size / 2} r={radius}
-        stroke="rgba(255,255,255,0.06)" strokeWidth="8" fill="none" />
-      <circle cx={size / 2} cy={size / 2} r={radius}
-        stroke={color} strokeWidth="8" fill="none"
+    <svg width={size} height={size} className="drop-shadow-glow">
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        stroke="rgba(255,255,255,0.08)"
+        strokeWidth="8"
+        fill="none"
+      />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        stroke={color}
+        strokeWidth="8"
+        fill="none"
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={offset}
-        style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)' }}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`} />
-      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle"
-        fill={color} fontSize="24" fontWeight="700">
+        style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.16,1,0.3,1)' }}
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+      />
+      <text
+        x="50%"
+        y="45%"
+        dominantBaseline="central"
+        textAnchor="middle"
+        fill={color}
+        fontSize="24"
+        fontWeight="800"
+      >
         {value}
+      </text>
+      <text
+        x="50%"
+        y="68%"
+        dominantBaseline="central"
+        textAnchor="middle"
+        fill="#94A3B8"
+        fontSize="10"
+        fontWeight="600"
+      >
+        / {max}
       </text>
     </svg>
   );
 }
 
-/* ── Metric bar ───────────────────────────────────────────────── */
-function MetricBar({ label, value, delay = 0 }) {
-  const pct = Math.round(value * 100);
-  const barColor = pct >= 70
-    ? 'from-emerald-500 to-teal-400'
-    : pct >= 40
-      ? 'from-amber-500 to-yellow-400'
-      : 'from-rose-500 to-pink-400';
+/* ── Metric Bar Helper ─────────────────────────────────────── */
+function MetricBar({ label, value, colorClass = 'from-primary-600 to-accent-cyan' }) {
+  const pct = Math.round((value || 0) * 100);
+
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between text-sm">
-        <span className="text-slate-300 font-medium">{label}</span>
-        <span className="text-slate-400 font-semibold">{pct}%</span>
+    <div className="space-y-1.5">
+      <div className="flex justify-between text-xs font-semibold">
+        <span className="text-slate-300">{label}</span>
+        <span className="text-white font-mono">{pct}%</span>
       </div>
-      <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
         <div
-          className={`h-full bg-gradient-to-r ${barColor} rounded-full transition-all ease-out`}
-          style={{ width: `${pct}%`, transitionDuration: '1s', transitionDelay: `${delay}ms` }}
+          className={`h-full bg-gradient-to-r ${colorClass} rounded-full transition-all duration-700`}
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════ */
 export default function InterviewEvaluationPage() {
   const { interviewId } = useParams();
   const navigate = useNavigate();
 
   const [evalData, setEvalData] = useState(null);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [downloading, setDownloading] = useState(false);
+
+  const contentRef = useRef();
 
   useEffect(() => {
     (async () => {
@@ -70,7 +108,7 @@ export default function InterviewEvaluationPage() {
         setEvalData(data);
       } catch (err) {
         if (err?.response?.status === 404)
-          setError('Evaluation not found. Please complete the interview first.');
+          setError('Evaluation not found. Please complete all questions first.');
         else if (err?.response?.status === 401)
           navigate('/login');
         else
@@ -81,216 +119,244 @@ export default function InterviewEvaluationPage() {
     })();
   }, [interviewId, navigate]);
 
-  /* ═══════════ RENDER ═══════════════════════════════════════ */
+  const handleDownloadPdf = () => {
+    if (!contentRef.current) return;
+    setDownloading(true);
+
+    html2canvas(contentRef.current, { scale: 2, backgroundColor: '#070A12' })
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`interview_evaluation_${new Date().toISOString().split('T')[0]}.pdf`);
+      })
+      .finally(() => setDownloading(false));
+  };
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <div className="w-12 h-12 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" />
-        <p className="text-slate-400 text-sm">Loading your evaluation…</p>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <div className="w-12 h-12 rounded-full border-2 border-primary-500/30 border-t-primary-500 animate-spin" />
+        <p className="text-slate-400 text-sm">Compiling multi-metric AI evaluation report...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-xl mx-auto mt-16 text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-          </svg>
-        </div>
-        <h2 className="text-xl font-bold text-white">Evaluation Unavailable</h2>
-        <p className="text-slate-400 text-sm">{error}</p>
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="mt-4 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-colors"
-        >
-          Back to Dashboard
-        </button>
+      <div className="max-w-xl mx-auto mt-12 text-center space-y-4">
+        <GlassCard className="space-y-4 p-8">
+          <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+            <IconArrowLeft className="w-6 h-6" />
+          </div>
+          <h2 className="text-xl font-bold text-white">Evaluation Unavailable</h2>
+          <p className="text-slate-400 text-xs">{error}</p>
+          <Button onClick={() => navigate('/dashboard')} variant="primary">
+            Return to Dashboard
+          </Button>
+        </GlassCard>
       </div>
     );
   }
 
+  
+  
   const d = evalData;
-  const scoreColor = d.overall_score >= 7 ? 'text-emerald-400' : d.overall_score >= 4 ? 'text-amber-400' : 'text-rose-400';
+  const scoreColor =
+    d.overall_score >= 7
+      ? 'text-accent-emerald'
+      : d.overall_score >= 4
+      ? 'text-amber-400'
+      : 'text-rose-400';
 
-  const contentRef = useRef();
-
-const handleDownloadPdf = () => {
-  if (!contentRef.current) return;
-  html2canvas(contentRef.current, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`interview_evaluation_${new Date().toISOString().split('T')[0]}.pdf`);
-  });
-};
-
-return (
-    <div ref={contentRef} className="max-w-3xl mx-auto space-y-8 pb-16">
-      {/* ── Back link ─────────────────────────────── */}
-      <button onClick={() => navigate('/dashboard')}
-        className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm group">
-        <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Dashboard
-      </button>
-
-      {/* ── Header ────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-slate-900/90 via-slate-800/60 to-emerald-900/20 border border-slate-700/50 rounded-2xl p-8 backdrop-blur-sm text-center space-y-4">
-        <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto">
-          <svg className="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h1 className="text-3xl font-bold tracking-tight text-white">Interview Complete!</h1>
-        <p className="text-slate-400">
-          {d.job_role} · {d.interview_type} · {d.difficulty}
-        </p>
-        <p className="text-slate-500 text-sm">
-          {d.answered_count} of {d.question_count} questions answered
-        </p>
-      </div>
-
-      {/* ── Overall Score + Metrics ───────────────── */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-        <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/50">
-          <h2 className="text-base font-semibold text-white">Overall Performance</h2>
-        </div>
-
-        <div className="p-6 space-y-8">
-          {/* Score ring centred */}
-          <div className="flex flex-col items-center gap-2">
-            <ScoreRing value={d.overall_score} />
-            <p className={`text-lg font-bold ${scoreColor}`}>
-              {d.overall_score} / 10
-            </p>
-            <p className="text-slate-500 text-xs uppercase tracking-wider">Overall Score</p>
-          </div>
-
-          {/* Metric bars */}
-          <div className="grid gap-5">
-            <MetricBar label="Correctness"      value={d.overall_correctness}            delay={0} />
-            <MetricBar label="Relevance"         value={d.overall_relevance}              delay={100} />
-            <MetricBar label="Technical Depth"   value={d.overall_technical_depth}        delay={200} />
-            <MetricBar label="Communication"     value={d.overall_communication_quality}  delay={300} />
-          </div>
-        </div>
-      </div>
-
-      {/* ── Feedback ──────────────────────────────── */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-        <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/50">
-          <h2 className="text-base font-semibold text-white">Final Feedback</h2>
-        </div>
-        <div className="p-6">
-          <p className="text-slate-300 text-sm leading-relaxed">{d.feedback}</p>
-        </div>
-      </div>
-
-      {/* ── Strengths / Areas to Improve ──────────── */}
-      {(d.strengths?.length > 0 || d.weaknesses?.length > 0) && (
-        <div className="grid sm:grid-cols-2 gap-4">
-          {d.strengths?.length > 0 && (
-            <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-2xl p-6 space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                </div>
-                <h3 className="text-sm font-semibold text-emerald-400">Strengths</h3>
-              </div>
-              <ul className="space-y-2 text-sm text-slate-300">
-                {d.strengths.map((s, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-emerald-500 mt-0.5">•</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {d.weaknesses?.length > 0 && (
-            <div className="bg-amber-500/5 border border-amber-500/15 rounded-2xl p-6 space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
-                  </svg>
-                </div>
-                <h3 className="text-sm font-semibold text-amber-400">Areas to Improve</h3>
-              </div>
-              <ul className="space-y-2 text-sm text-slate-300">
-                {d.weaknesses.map((w, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-amber-500 mt-0.5">•</span>
-                    <span>{w}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── Per-question breakdown ────────────────── */}
-      {d.per_question_evaluations?.length > 0 && (
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-          <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/50">
-            <h2 className="text-base font-semibold text-white">Per-Question Breakdown</h2>
-          </div>
-          <div className="divide-y divide-slate-800">
-            {d.per_question_evaluations.map((q, idx) => {
-              const qScoreColor = q.score >= 7 ? 'text-emerald-400' : q.score >= 4 ? 'text-amber-400' : 'text-rose-400';
-              return (
-                <div key={idx} className="px-6 py-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full flex-shrink-0">
-                      Q{idx + 1}
-                    </span>
-                    <span className="text-slate-400 text-sm truncate">{q.feedback}</span>
-                  </div>
-                  <span className={`text-lg font-bold ${qScoreColor} flex-shrink-0`}>{q.score}/10</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── Actions ───────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <button
-          onClick={handleDownloadPdf}
-          className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30"
-        >
-          Download PDF Report
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-        </button>
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 pb-16">
+      {/* Top Header Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <button
           onClick={() => navigate('/dashboard')}
-          className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-500/30"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors group"
         >
-          Back to Dashboard
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
+          <IconArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          <span>Back to Dashboard</span>
         </button>
-        <button
-          onClick={() => navigate('/interview/setup')}
-          className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-all duration-200"
-        >
-          Start New Interview
-        </button>
+
+        <div className="flex flex-wrap gap-3">
+          <Button
+            onClick={handleDownloadPdf}
+            loading={downloading}
+            icon={IconDownload}
+            variant="cyan"
+            size="sm"
+          >
+            Export PDF Report
+          </Button>
+          <Button
+            onClick={() => navigate('/interview/setup')}
+            icon={IconRefresh}
+            variant="primary"
+            size="sm"
+            className="shadow-glow-primary"
+          >
+            Start New Session
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Printable Content Container */}
+      <div ref={contentRef} className="space-y-8 p-1">
+        {/* Celebration Header Card */}
+        <GlassCard className="text-center space-y-4 p-8 bg-gradient-to-b from-primary-600/10 via-transparent to-transparent border-primary-500/30">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary-600 to-accent-cyan flex items-center justify-center mx-auto text-white shadow-glow-primary">
+            <IconCheck className="w-8 h-8" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-white">Interview Complete!</h1>
+            <p className="text-sm text-slate-400 mt-1 font-medium">
+              {d.job_role} · {d.interview_type} Domain · {d.difficulty} Difficulty
+            </p>
+            <p className="text-xs text-slate-500 font-mono mt-1">
+              Answered {d.answered_count} of {d.question_count} questions
+            </p>
+          </div>
+        </GlassCard>
+
+        {/* Overall Score Ring & Dimensional Breakdown */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <GlassCard className="flex flex-col items-center justify-center space-y-3 text-center p-8">
+            <ScoreRing value={d.overall_score} />
+            <div>
+              <p className={`text-2xl font-extrabold ${scoreColor}`}>
+                {d.overall_score} / 10
+              </p>
+              <p className="text-xs uppercase font-bold tracking-wider text-slate-400 mt-0.5">
+                Overall AI Score
+              </p>
+            </div>
+          </GlassCard>
+
+          <GlassCard className="md:col-span-2 space-y-4 p-6">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+              Dimensional Evaluation Breakdown
+            </h3>
+            <div className="space-y-3.5 pt-1">
+              <MetricBar
+                label="Answer Correctness"
+                value={d.overall_correctness}
+                colorClass="from-accent-emerald to-teal-400"
+              />
+              <MetricBar
+                label="Role Relevance"
+                value={d.overall_relevance}
+                colorClass="from-amber-400 to-orange-500"
+              />
+              <MetricBar
+                label="Technical Depth"
+                value={d.overall_technical_depth}
+                colorClass="from-primary-600 to-indigo-400"
+              />
+              <MetricBar
+                label="Communication Quality"
+                value={d.overall_communication_quality}
+                colorClass="from-accent-cyan to-blue-500"
+              />
+            </div>
+          </GlassCard>
+        </div>
+
+        {/* Executive Feedback summary */}
+        <GlassCard className="space-y-3 p-6">
+          <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <IconSparkles className="w-4 h-4 text-accent-cyan" />
+            <span>AI Executive Feedback</span>
+          </h3>
+          <p className="text-xs text-slate-300 leading-relaxed">{d.feedback}</p>
+        </GlassCard>
+
+        {/* Strengths & Weaknesses */}
+        {(d.strengths?.length > 0 || d.weaknesses?.length > 0) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {d.strengths?.length > 0 && (
+              <GlassCard className="space-y-3 p-6 border-emerald-500/20 bg-emerald-500/5">
+                <h3 className="text-xs font-bold text-accent-emerald uppercase tracking-wider flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-accent-emerald" />
+                  Key Strengths Observed
+                </h3>
+                <ul className="space-y-2 text-xs text-slate-300">
+                  {d.strengths.map((str, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-accent-emerald font-bold">•</span>
+                      <span>{str}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            )}
+
+            {d.weaknesses?.length > 0 && (
+              <GlassCard className="space-y-3 p-6 border-amber-500/20 bg-amber-500/5">
+                <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                  Target Areas for Growth
+                </h3>
+                <ul className="space-y-2 text-xs text-slate-300">
+                  {d.weaknesses.map((wk, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-amber-400 font-bold">•</span>
+                      <span>{wk}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            )}
+          </div>
+        )}
+
+        {/* Per-Question Breakdown List */}
+        {d.per_question_evaluations?.length > 0 && (
+          <GlassCard className="space-y-4 p-6">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+              Per-Question Performance Log
+            </h3>
+            <div className="space-y-3">
+              {d.per_question_evaluations.map((q, idx) => {
+                const qScoreColor =
+                  q.score >= 7
+                    ? 'text-accent-emerald'
+                    : q.score >= 4
+                    ? 'text-amber-400'
+                    : 'text-rose-400';
+
+                return (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-xl glass-panel flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-white/[0.06]"
+                  >
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-600/20 text-primary-300">
+                          Q#{idx + 1}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-300 font-medium">{q.feedback}</p>
+                    </div>
+
+                    <div className="text-right flex-shrink-0">
+                      <span className={`text-base font-extrabold ${qScoreColor}`}>
+                        {q.score} / 10
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </GlassCard>
+        )}
       </div>
     </div>
+
   );
 }

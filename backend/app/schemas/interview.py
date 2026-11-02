@@ -31,6 +31,9 @@ class InterviewSessionCreate(BaseModel):
     experience_level: EXPERIENCE_LEVELS
     difficulty: DIFFICULTIES
     question_count: QUESTION_COUNTS
+    interview_language: Optional[str] = "English"
+    resume_skills: Optional[List[str]] = Field(default_factory=list)
+    selected_skills: Optional[List[str]] = Field(default_factory=list)
 
 
 # ---- Response schemas ----
@@ -48,6 +51,13 @@ class InterviewSessionResponse(BaseModel):
     created_at: datetime
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    interview_language: Optional[str] = "English"
+    job_description: Optional[str] = None
+    resume_skills: Optional[str] = None
+    selected_skills: Optional[str] = None
+    source_context: Optional[str] = None
+    resume_profile: Optional[str] = None
+    adaptive_state: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 

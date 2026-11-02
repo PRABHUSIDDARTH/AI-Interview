@@ -22,6 +22,16 @@ class InterviewSession(Base):
     experience_level = Column(String, nullable=False)
     difficulty = Column(String, nullable=False)
     question_count = Column(Integer, nullable=False)
+    job_description = Column(String, nullable=True)
+    interview_language = Column(String, default="English", nullable=True)
+    resume_skills = Column(String, default='[]', nullable=True)
+    selected_skills = Column(String, default='[]', nullable=True)
+    # JSON list of source references used for question generation (traceability)
+    source_context = Column(String, default='[]', nullable=True)
+    # JSON structured candidate profile (projects, experience, education, skills)
+    resume_profile = Column(String, default='{}', nullable=True)
+    # JSON adaptive interview state (topics covered, weak/strong topics, difficulty tracking)
+    adaptive_state = Column(String, default='{}', nullable=True)
 
     # Status: created | in_progress | completed | cancelled
     status = Column(String, default="created", nullable=False)

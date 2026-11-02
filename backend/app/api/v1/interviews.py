@@ -3,6 +3,8 @@ from app.schemas.interview import (
     InterviewSessionResponse,
     InterviewSessionListResponse,
 )
+from app.schemas.coaching import AICoachResponse
+from app.services.rag_coach import RAGCoachService
 from app.models.interview_session import InterviewSession
 from app.services.interview_engine import InterviewEngine
 from fastapi import APIRouter, Depends, HTTPException, status, Body, File, Form, UploadFile
@@ -37,6 +39,52 @@ def create_interview(
     db.refresh(db_session)
     return db_session
 
+from app.services.resume_parser import ResumeParserService
+
+@router.post("/extract-resume", response_model=Dict, status_code=status.HTTP_200_OK)
+async def extract_resume_data(
+    resume: UploadFile = File(...),
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
+    """Extract structured skills, technologies, and inferred job role from uploaded resume PDF."""
+    filename = (resume.filename or "").lower()
+    if resume.content_type != "application/pdf" and not filename.endswith(".pdf"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Resume must be a PDF file.")
+    
+    content = await resume.read()
+    max_size = 2 * 1024 * 1024
+    if len(content) > max_size:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Resume PDF exceeds maximum size of 2 MiB.")
+    
+    # Magic byte header validation to prevent file extension spoofing
+    if not content.startswith(b"%PDF"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid PDF file format. Missing PDF header.")
+
+    import os, tempfile
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        tmp.write(content)
+        tmp_path = tmp.name
+    try:
+        try:
+            resume_text = extract_text_from_pdf(tmp_path)
+        except Exception as pdf_err:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed to process resume PDF: File is corrupt or unreadable."
+            )
+        
+        if not resume_text or not resume_text.strip():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Resume PDF is empty or contains no extractable text.")
+        
+        parser = ResumeParserService(engine.provider)
+        profile = parser.parse_resume_text(resume_text)
+        return {"success": True, "profile": profile}
+    finally:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+
 @router.post("/start", response_model=Dict, status_code=status.HTTP_201_CREATED)
 async def start_interview(
     interview_type: str = Form(...),
@@ -44,12 +92,44 @@ async def start_interview(
     experience_level: str = Form(...),
     difficulty: str = Form(...),
     question_count: int = Form(...),
+    interview_language: Optional[str] = Form("English"),
+    resume_skills: Optional[str] = Form(None),  # JSON string or comma-separated list
+    selected_skills: Optional[str] = Form(None),  # JSON string of user-chosen skill subset
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_user),
     resume: UploadFile = File(None),
     job_description: Optional[str] = Form(None),
 ) -> Any:
-    """Create a session and return the first question, with optional resume PDF and job description."""
+    """Create a session and return the first question, with optional resume PDF, language, skills, and selected skill focus."""
+    from app.services.resume_parser import normalize_skill
+    import logging, os, tempfile, json
+    logger = logging.getLogger("uvicorn.error")
+
+    def parse_skill_list(raw: Optional[str]) -> list[str]:
+        if not raw or not raw.strip():
+            return []
+        try:
+            val = json.loads(raw)
+            if isinstance(val, list):
+                return [normalize_skill(str(s)) for s in val if str(s).strip()]
+        except Exception:
+            pass
+        # Fallback to comma separation
+        cleaned = raw.strip(" '\"[]")
+        parts = [p.strip(" '\"[]") for p in cleaned.split(",") if p.strip(" '\"[]")]
+        return [normalize_skill(p) for p in parts]
+
+    parsed_skills = parse_skill_list(resume_skills)
+    parsed_selected = parse_skill_list(selected_skills)
+
+    # Ensure selected skills are present in parsed_skills
+    if parsed_selected:
+        skill_set = set(parsed_skills)
+        for sel in parsed_selected:
+            if sel not in skill_set:
+                parsed_skills.append(sel)
+                skill_set.add(sel)
+
     # Build the Pydantic model for session creation
     session_in = InterviewSessionCreate(
         interview_type=interview_type,
@@ -57,34 +137,49 @@ async def start_interview(
         experience_level=experience_level,
         difficulty=difficulty,
         question_count=question_count,
+        interview_language=interview_language or "English",
+        resume_skills=parsed_skills,
+        selected_skills=parsed_selected,
     )
-    import logging, os, tempfile
-    logger = logging.getLogger("uvicorn.error")
+
     resume_text: Optional[str] = None
+
     # Process resume PDF if provided
-    if resume is not None:
-        if resume.content_type != "application/pdf":
+    if resume is not None and getattr(resume, "filename", None):
+        filename = (resume.filename or "").lower()
+        if resume.content_type != "application/pdf" and not filename.endswith(".pdf"):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Resume must be a PDF file.")
+        
         content = await resume.read()
         max_size = 2 * 1024 * 1024
         if len(content) > max_size:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Resume PDF exceeds maximum size of 2 MiB.")
+        
+        if not content.startswith(b"%PDF"):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid PDF file format. Missing PDF header.")
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
             tmp.write(content)
             tmp_path = tmp.name
         try:
-            resume_text = extract_text_from_pdf(tmp_path)
-            if not resume_text.strip():
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Resume PDF is empty or could not be processed.")
+            extracted = extract_text_from_pdf(tmp_path)
+            if extracted and extracted.strip():
+                resume_text = extracted
+        except Exception as pdf_err:
+            logger.warning("Failed to extract text from resume PDF in start_interview: %s", pdf_err)
         finally:
             try:
                 os.remove(tmp_path)
             except OSError:
                 pass
+
     # Validate job description length if provided
-    if job_description is not None:
-        if len(job_description) > 2000:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Job description exceeds maximum length of 2000 characters.")
+    if job_description is not None and len(job_description) > 2000:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Job description must not exceed 2,000 characters."
+        )
+
     try:
         session = engine.create_session(db, session_in, current_user.id, resume_text=resume_text, job_description=job_description)
         question = engine.get_next_question(db, session.id)
@@ -144,6 +239,15 @@ def get_user_analytics(
 ) -> Any:
     """Return aggregated analytics for the current user across all interview sessions."""
     return engine.get_user_analytics(db, current_user.id)
+
+@router.get("/coach", response_model=AICoachResponse, status_code=status.HTTP_200_OK)
+def get_ai_coach_guidance(
+    db: Session = Depends(deps.get_db),
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
+    """Return personalized AI coaching recommendations using RAG over current user's history."""
+    coach_service = RAGCoachService(engine.provider)
+    return coach_service.generate_coaching_guidance(db, current_user)
 
 @router.get("/{interview_id}", response_model=InterviewSessionResponse)
 def get_interview(

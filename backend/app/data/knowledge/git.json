@@ -1,0 +1,68 @@
+[
+  {
+    "skill": "Git",
+    "topic": "Core Concepts — Commits and History",
+    "difficulty": "beginner",
+    "concepts": ["commits", "commit messages", "SHA hash", "git log", "git diff", "HEAD", "working tree vs staging vs repository"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["vague commit messages", "committing too infrequently", "not understanding staged vs unstaged changes"],
+    "source_name": "Git Official Documentation",
+    "source_url": "https://git-scm.com/docs/git-commit",
+    "tags": ["commits", "history", "basics"]
+  },
+  {
+    "skill": "Git",
+    "topic": "Branching and Merging",
+    "difficulty": "beginner",
+    "concepts": ["git branch", "git checkout / git switch", "merge commits", "fast-forward merge", "merge conflicts", "git stash"],
+    "question_types": ["practical", "debugging"],
+    "common_mistakes": ["committing directly to main", "not pulling before creating branch", "stash loss"],
+    "source_name": "Git Official Documentation",
+    "source_url": "https://git-scm.com/docs/git-branch",
+    "tags": ["branching", "merging", "workflow"]
+  },
+  {
+    "skill": "Git",
+    "topic": "Rebase and History Rewriting",
+    "difficulty": "intermediate",
+    "concepts": ["git rebase", "interactive rebase (squash, fixup, reorder)", "rebase vs merge", "git cherry-pick", "force push dangers", "reflog"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["rebasing shared public branches", "force pushing without --force-with-lease", "losing commits after rebase"],
+    "source_name": "Git Official Documentation",
+    "source_url": "https://git-scm.com/docs/git-rebase",
+    "tags": ["rebase", "history", "cherry-pick"]
+  },
+  {
+    "skill": "Git",
+    "topic": "Remote Repositories and Collaboration",
+    "difficulty": "beginner",
+    "concepts": ["git remote", "git fetch vs git pull", "git push", "origin", "upstream", "pull requests / merge requests", "forking model"],
+    "question_types": ["practical", "conceptual"],
+    "common_mistakes": ["git pull with merge on team (creates noisy history)", "not fetching before creating feature branch", "force push to main"],
+    "source_name": "Git Official Documentation",
+    "source_url": "https://git-scm.com/docs/git-remote",
+    "tags": ["remote", "collaboration", "pull-request"]
+  },
+  {
+    "skill": "Git",
+    "topic": "Git Workflows",
+    "difficulty": "intermediate",
+    "concepts": ["Gitflow", "trunk-based development", "feature flags with short-lived branches", "release branches", "hotfix branches", "conventional commits"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["long-lived feature branches causing merge conflicts", "no release process", "skipping code review"],
+    "source_name": "Git Official Documentation",
+    "source_url": "https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows",
+    "tags": ["gitflow", "trunk-based", "workflow"]
+  },
+  {
+    "skill": "Git",
+    "topic": "Advanced — Hooks, Submodules, and Performance",
+    "difficulty": "advanced",
+    "concepts": ["git hooks (pre-commit, pre-push)", "git submodules", "git worktrees", "shallow clones", "git LFS", "partial clone"],
+    "question_types": ["advanced", "scenario"],
+    "common_mistakes": ["checking in generated files", "not using .gitignore", "forgetting to update submodule after clone"],
+    "source_name": "Git Official Documentation",
+    "source_url": "https://git-scm.com/docs/githooks",
+    "tags": ["hooks", "submodules", "advanced"]
+  }
+]

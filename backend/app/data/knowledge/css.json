@@ -1,0 +1,68 @@
+[
+  {
+    "skill": "CSS",
+    "topic": "Box Model and Layout",
+    "difficulty": "beginner",
+    "concepts": ["content, padding, border, margin", "box-sizing: border-box", "display: block/inline/inline-block", "width/height calculations", "collapsing margins"],
+    "question_types": ["conceptual", "debugging"],
+    "common_mistakes": ["not using box-sizing: border-box", "collapsing margin surprises", "percentage height without defined parent height"],
+    "source_name": "MDN Web Docs — CSS Box Model",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_box_model",
+    "tags": ["box-model", "layout", "basics"]
+  },
+  {
+    "skill": "CSS",
+    "topic": "Flexbox",
+    "difficulty": "beginner",
+    "concepts": ["flex container vs items", "flex-direction", "justify-content", "align-items", "flex-wrap", "flex-grow/shrink/basis", "order"],
+    "question_types": ["practical", "debugging"],
+    "common_mistakes": ["applying flex properties to wrong element (container vs item)", "not understanding flex-basis vs width", "missing flex-wrap causing overflow"],
+    "source_name": "MDN Web Docs — Flexbox",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout",
+    "tags": ["flexbox", "layout", "responsive"]
+  },
+  {
+    "skill": "CSS",
+    "topic": "CSS Grid",
+    "difficulty": "intermediate",
+    "concepts": ["grid-template-columns/rows", "grid-area", "minmax()", "auto-fill/auto-fit", "fr unit", "grid-gap", "explicit vs implicit grid"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["using grid where flexbox is simpler", "not understanding auto-fill vs auto-fit", "incorrect grid-area naming"],
+    "source_name": "MDN Web Docs — CSS Grid",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout",
+    "tags": ["grid", "layout", "responsive"]
+  },
+  {
+    "skill": "CSS",
+    "topic": "Responsive Design and Media Queries",
+    "difficulty": "intermediate",
+    "concepts": ["mobile-first approach", "@media queries", "breakpoints", "viewport units (vh, vw, dvh)", "clamp()", "fluid typography"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["desktop-first making mobile an afterthought", "too many breakpoints", "not testing on real devices"],
+    "source_name": "MDN Web Docs — Media Queries",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries",
+    "tags": ["responsive", "media-queries", "mobile-first"]
+  },
+  {
+    "skill": "CSS",
+    "topic": "Specificity and Cascade",
+    "difficulty": "intermediate",
+    "concepts": ["specificity calculation", "cascade order", "!important", "CSS custom properties (variables)", "inheritance", "layer (@layer)"],
+    "question_types": ["conceptual", "debugging"],
+    "common_mistakes": ["overusing !important", "unintended specificity from ID selectors", "specificity wars in large codebases"],
+    "source_name": "MDN Web Docs — Specificity",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity",
+    "tags": ["specificity", "cascade", "CSS-variables"]
+  },
+  {
+    "skill": "CSS",
+    "topic": "Animations and Transitions",
+    "difficulty": "intermediate",
+    "concepts": ["transition property", "keyframe animations (@keyframes)", "animation-fill-mode", "will-change", "GPU compositing", "prefers-reduced-motion"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["animating layout properties (width/top) instead of transform", "no reduced-motion support", "heavy animations on mobile"],
+    "source_name": "MDN Web Docs — CSS Animations",
+    "source_url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations",
+    "tags": ["animations", "transitions", "performance"]
+  }
+]

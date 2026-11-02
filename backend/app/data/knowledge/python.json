@@ -1,0 +1,145 @@
+[
+  {
+    "skill": "Python",
+    "topic": "Data Types and Variables",
+    "difficulty": "beginner",
+    "concepts": ["int, float, str, bool", "dynamic typing", "type() and isinstance()", "type coercion", "None type"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["confusing == with is for object identity", "mutable default arguments", "integer division vs float division"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/library/stdtypes.html",
+    "tags": ["types", "variables", "basics"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Functions, Args, and Kwargs",
+    "difficulty": "beginner",
+    "concepts": ["positional arguments", "keyword arguments", "*args", "**kwargs", "default values", "lambda functions", "first-class functions"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["mutable default arguments (list/dict)", "mixing positional and keyword arguments incorrectly", "misunderstanding lambda scope"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions",
+    "tags": ["functions", "args", "kwargs", "lambda"]
+  },
+  {
+    "skill": "Python",
+    "topic": "List, Dict, and Set Comprehensions",
+    "difficulty": "beginner",
+    "concepts": ["list comprehension syntax", "dict comprehension", "set comprehension", "nested comprehensions", "conditional filtering"],
+    "question_types": ["practical", "conceptual"],
+    "common_mistakes": ["overusing comprehensions at expense of readability", "side effects inside comprehensions", "forgetting generator expressions"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions",
+    "tags": ["comprehensions", "lists", "dicts", "pythonic"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Object-Oriented Programming",
+    "difficulty": "intermediate",
+    "concepts": ["classes and objects", "__init__", "instance vs class attributes", "inheritance", "super()", "polymorphism", "encapsulation", "dunder methods"],
+    "question_types": ["conceptual", "practical", "scenario"],
+    "common_mistakes": ["forgetting self parameter", "not calling super().__init__()", "mutable class-level attributes shared across instances"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/tutorial/classes.html",
+    "tags": ["OOP", "classes", "inheritance", "polymorphism"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Decorators",
+    "difficulty": "intermediate",
+    "concepts": ["function decorators", "class decorators", "functools.wraps", "stacked decorators", "decorator factories", "@property, @staticmethod, @classmethod"],
+    "question_types": ["conceptual", "practical", "scenario"],
+    "common_mistakes": ["not using functools.wraps (losing metadata)", "incorrect decorator factory parameter passing", "decorator order confusion"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/glossary.html#term-decorator",
+    "tags": ["decorators", "metaprogramming", "functional"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Generators and Iterators",
+    "difficulty": "intermediate",
+    "concepts": ["yield keyword", "generator expressions", "__iter__ and __next__", "lazy evaluation", "infinite generators", "itertools module"],
+    "question_types": ["conceptual", "practical", "scenario"],
+    "common_mistakes": ["confusing generators with lists", "exhausting a generator and not knowing it", "using return instead of yield"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/howto/functional.html#generators",
+    "tags": ["generators", "iterators", "lazy-evaluation", "memory"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Context Managers",
+    "difficulty": "intermediate",
+    "concepts": ["with statement", "__enter__ and __exit__", "contextlib.contextmanager", "exception handling in context", "resource management"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["forgetting to close resources without context manager", "swallowing exceptions in __exit__", "not using contextlib for simple cases"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/reference/datamodel.html#context-managers",
+    "tags": ["context-managers", "with", "resource-management"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Exception Handling",
+    "difficulty": "intermediate",
+    "concepts": ["try/except/else/finally", "custom exceptions", "exception hierarchy", "raising exceptions", "chaining exceptions with 'from'"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["bare except:", "catching too broad exceptions", "not re-raising when appropriate", "using exceptions for control flow"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/tutorial/errors.html",
+    "tags": ["exceptions", "error-handling", "try-except"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Async/Await and asyncio",
+    "difficulty": "advanced",
+    "concepts": ["coroutines", "async def / await", "event loop", "asyncio.gather", "asyncio.create_task", "async context managers", "async iterators"],
+    "question_types": ["conceptual", "practical", "scenario", "debugging"],
+    "common_mistakes": ["blocking the event loop with synchronous calls", "forgetting to await coroutines", "mixing sync and async code incorrectly"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/library/asyncio.html",
+    "tags": ["async", "asyncio", "concurrency", "coroutines"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Memory Management and GIL",
+    "difficulty": "advanced",
+    "concepts": ["reference counting", "garbage collection", "GIL (Global Interpreter Lock)", "memory profiling", "gc module", "weak references"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["assuming threads run in parallel (GIL)", "circular references causing memory leaks", "not using __slots__ for memory optimization"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/c-api/memory.html",
+    "tags": ["memory", "GIL", "garbage-collection", "performance"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Type Hints and Typing Module",
+    "difficulty": "intermediate",
+    "concepts": ["PEP 484 type hints", "Optional, Union, List, Dict", "TypeVar", "Generic classes", "Protocol", "dataclasses", "mypy integration"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["using type hints as runtime enforcement (they are not)", "incorrect Optional usage", "forgetting to annotate return types"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/library/typing.html",
+    "tags": ["type-hints", "typing", "mypy", "static-analysis"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Testing with pytest",
+    "difficulty": "intermediate",
+    "concepts": ["test discovery", "fixtures", "parametrize", "mocking with unittest.mock", "assert statements", "conftest.py", "test isolation"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["tight coupling making tests hard to write", "not isolating external dependencies", "testing implementation details instead of behaviour"],
+    "source_name": "pytest Documentation",
+    "source_url": "https://docs.pytest.org/en/stable/",
+    "tags": ["testing", "pytest", "fixtures", "mocking"]
+  },
+  {
+    "skill": "Python",
+    "topic": "Performance Optimisation",
+    "difficulty": "advanced",
+    "concepts": ["profiling with cProfile", "memory_profiler", "algorithmic complexity", "NumPy vectorisation", "caching with functools.lru_cache", "Cython and C extensions"],
+    "question_types": ["scenario", "advanced"],
+    "common_mistakes": ["optimising without profiling first", "O(n²) algorithms on large datasets", "not using built-in functions (implemented in C)"],
+    "source_name": "Python Official Documentation",
+    "source_url": "https://docs.python.org/3/library/profile.html",
+    "tags": ["performance", "profiling", "optimisation"]
+  }
+]

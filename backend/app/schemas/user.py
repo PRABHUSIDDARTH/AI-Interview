@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 class UserBase(BaseModel):
     email: str
@@ -33,3 +33,23 @@ class Token(BaseModel):
 class TokenPayload(BaseModel):
     sub: Optional[str] = None
 
+
+# ---------------------------------------------------------------------------
+# Password reset schemas
+# ---------------------------------------------------------------------------
+
+class ForgotPasswordRequest(BaseModel):
+    email: str = Field(..., description="Registered email address")
+
+    @field_validator("email")
+    @classmethod
+    def email_must_not_be_empty(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("email must not be empty")
+        return v
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(..., description="Raw reset token received via email")
+    new_password: str = Field(..., min_length=8, description="New password (min 8 chars)")

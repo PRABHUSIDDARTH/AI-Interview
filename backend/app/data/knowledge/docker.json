@@ -1,0 +1,68 @@
+[
+  {
+    "skill": "Docker",
+    "topic": "Containers and Images",
+    "difficulty": "beginner",
+    "concepts": ["container vs VM", "Docker image layers", "Dockerfile", "docker build", "docker run", "image tags", "Docker Hub"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["running as root in container", "using latest tag in production", "large image sizes"],
+    "source_name": "Docker Official Documentation",
+    "source_url": "https://docs.docker.com/get-started/overview/",
+    "tags": ["containers", "images", "dockerfile"]
+  },
+  {
+    "skill": "Docker",
+    "topic": "Dockerfile Best Practices",
+    "difficulty": "intermediate",
+    "concepts": ["layer caching", "multi-stage builds", ".dockerignore", "minimising image size", "non-root user", "COPY vs ADD", "ARG vs ENV"],
+    "question_types": ["practical", "scenario", "advanced"],
+    "common_mistakes": ["COPY before RUN for dependencies (breaks caching)", "not using .dockerignore", "single-stage bloated images"],
+    "source_name": "Docker Official Documentation",
+    "source_url": "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+    "tags": ["dockerfile", "best-practices", "caching", "multi-stage"]
+  },
+  {
+    "skill": "Docker",
+    "topic": "Docker Networking",
+    "difficulty": "intermediate",
+    "concepts": ["bridge network", "host network", "overlay network", "docker network create", "container DNS resolution", "port mapping", "container-to-container communication"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["exposing unnecessary ports", "hardcoding IP addresses instead of service names", "default bridge network for production"],
+    "source_name": "Docker Official Documentation",
+    "source_url": "https://docs.docker.com/network/",
+    "tags": ["networking", "bridge", "overlay"]
+  },
+  {
+    "skill": "Docker",
+    "topic": "Docker Compose",
+    "difficulty": "intermediate",
+    "concepts": ["docker-compose.yml", "services, networks, volumes", "depends_on", "environment variables", "health checks", "scale services"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["depends_on doesn't wait for service readiness", "hardcoding secrets in compose file", "not using named volumes"],
+    "source_name": "Docker Official Documentation",
+    "source_url": "https://docs.docker.com/compose/",
+    "tags": ["compose", "orchestration", "multi-container"]
+  },
+  {
+    "skill": "Docker",
+    "topic": "Volumes and Data Persistence",
+    "difficulty": "intermediate",
+    "concepts": ["named volumes", "bind mounts", "tmpfs mounts", "volume lifecycle", "data persistence between container restarts", "backup strategies"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["writing data inside container (lost on stop)", "bind mount path issues on Windows", "not backing up volume data"],
+    "source_name": "Docker Official Documentation",
+    "source_url": "https://docs.docker.com/storage/volumes/",
+    "tags": ["volumes", "persistence", "storage"]
+  },
+  {
+    "skill": "Docker",
+    "topic": "Docker Security",
+    "difficulty": "advanced",
+    "concepts": ["principle of least privilege", "non-root user", "read-only filesystem", "seccomp profiles", "Docker secrets", "image scanning", "capabilities"],
+    "question_types": ["scenario", "advanced"],
+    "common_mistakes": ["running privileged containers", "storing secrets as ENV variables", "pulling untrusted base images"],
+    "source_name": "Docker Official Documentation — Security",
+    "source_url": "https://docs.docker.com/engine/security/",
+    "tags": ["security", "least-privilege", "secrets"]
+  }
+]

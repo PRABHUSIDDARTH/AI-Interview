@@ -1,0 +1,79 @@
+[
+  {
+    "skill": "TypeScript",
+    "topic": "Type System Fundamentals",
+    "difficulty": "beginner",
+    "concepts": ["primitive types", "type inference", "type annotations", "union types", "intersection types", "literal types", "any vs unknown"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["overusing any", "not leveraging inference", "using object instead of specific interface"],
+    "source_name": "TypeScript Official Documentation",
+    "source_url": "https://www.typescriptlang.org/docs/handbook/basic-types.html",
+    "tags": ["types", "inference", "union", "basics"]
+  },
+  {
+    "skill": "TypeScript",
+    "topic": "Interfaces and Type Aliases",
+    "difficulty": "beginner",
+    "concepts": ["interface definition", "type alias", "interface vs type", "extending interfaces", "readonly and optional properties", "index signatures"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["choosing interface vs type without understanding differences", "not making properties readonly when appropriate", "open interface merging surprises"],
+    "source_name": "TypeScript Official Documentation",
+    "source_url": "https://www.typescriptlang.org/docs/handbook/interfaces.html",
+    "tags": ["interfaces", "type-aliases"]
+  },
+  {
+    "skill": "TypeScript",
+    "topic": "Generics",
+    "difficulty": "intermediate",
+    "concepts": ["generic functions", "generic interfaces", "generic constraints (extends)", "multiple type parameters", "conditional types", "infer keyword"],
+    "question_types": ["conceptual", "practical", "advanced"],
+    "common_mistakes": ["generic constraints too broad", "using any instead of generics", "overcomplicating with advanced generics"],
+    "source_name": "TypeScript Official Documentation",
+    "source_url": "https://www.typescriptlang.org/docs/handbook/generics.html",
+    "tags": ["generics", "type-parameters", "constraints"]
+  },
+  {
+    "skill": "TypeScript",
+    "topic": "Narrowing and Type Guards",
+    "difficulty": "intermediate",
+    "concepts": ["typeof narrowing", "instanceof", "in operator", "discriminated unions", "custom type guard (is)", "assertion functions"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["not using discriminated unions for complex types", "type assertions instead of type guards", "narrowing not recognised by TS compiler"],
+    "source_name": "TypeScript Official Documentation",
+    "source_url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+    "tags": ["narrowing", "type-guards", "discriminated-unions"]
+  },
+  {
+    "skill": "TypeScript",
+    "topic": "Utility Types",
+    "difficulty": "intermediate",
+    "concepts": ["Partial<T>", "Required<T>", "Readonly<T>", "Pick<T,K>", "Omit<T,K>", "Record<K,V>", "ReturnType<F>", "Parameters<F>"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["not knowing built-in utility types exist", "recreating types manually instead of Partial/Omit", "deep Readonly limitations"],
+    "source_name": "TypeScript Official Documentation",
+    "source_url": "https://www.typescriptlang.org/docs/handbook/utility-types.html",
+    "tags": ["utility-types", "mapped-types"]
+  },
+  {
+    "skill": "TypeScript",
+    "topic": "tsconfig and Build Configuration",
+    "difficulty": "intermediate",
+    "concepts": ["tsconfig.json options", "strict mode", "target and module", "paths aliases", "incremental compilation", "declaration files .d.ts"],
+    "question_types": ["practical", "conceptual"],
+    "common_mistakes": ["turning off strict mode", "incorrect module/target for environment", "not generating .d.ts for libraries"],
+    "source_name": "TypeScript Official Documentation",
+    "source_url": "https://www.typescriptlang.org/tsconfig",
+    "tags": ["tsconfig", "strict-mode", "build"]
+  },
+  {
+    "skill": "TypeScript",
+    "topic": "Advanced Types — Mapped, Conditional, Template Literal",
+    "difficulty": "advanced",
+    "concepts": ["mapped types", "conditional types", "template literal types", "infer within conditional", "recursive types", "branded types"],
+    "question_types": ["advanced", "scenario"],
+    "common_mistakes": ["overly complex types hurting readability", "conditional type circularity", "runtime confusion with compile-time types"],
+    "source_name": "TypeScript Official Documentation",
+    "source_url": "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html",
+    "tags": ["mapped-types", "conditional-types", "template-literal", "advanced"]
+  }
+]

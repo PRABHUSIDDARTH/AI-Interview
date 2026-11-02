@@ -1,25 +1,34 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1 import auth, health, interviews
+from app.api.v1 import auth, health, interviews, coach
 from app.core.config import settings
-from app.core.database import engine, Base
+from app.core.database import engine, Base, wait_for_db
+from app.core.migration import run_auto_migrations
+
 
 # Import all models so Base.metadata includes them before create_all
 import app.models  # noqa: F401 — registers User and InterviewSession
 
+# Wait for database availability (vital when starting in containerized environments)
+wait_for_db()
+
 # Automatically create database tables if they do not exist
 Base.metadata.create_all(bind=engine)
+# Idempotently add any missing columns (e.g. job_description, interview_language, resume_skills)
+run_auto_migrations(engine)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-# CORS Configuration - Allow all origins for the MVP development environment
+# CORS Configuration - Environment-driven configurable allowed origins
+cors_origins = settings.CORS_ORIGINS if settings.CORS_ORIGINS else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=cors_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -40,6 +49,11 @@ app.include_router(
     interviews.router,
     prefix=f"{settings.API_V1_STR}/interviews",
     tags=["Interviews"],
+)
+app.include_router(
+    coach.router,
+    prefix=f"{settings.API_V1_STR}/coach",
+    tags=["Coach"],
 )
 
 if __name__ == "__main__":

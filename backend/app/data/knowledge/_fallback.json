@@ -1,0 +1,68 @@
+[
+  {
+    "skill": "General Software Engineering",
+    "topic": "System Design Fundamentals",
+    "difficulty": "intermediate",
+    "concepts": ["scalability", "availability", "reliability", "CAP theorem", "latency vs throughput", "caching strategies", "load balancing"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["over-engineering for unneeded scale", "ignoring failure modes", "not thinking about data consistency"],
+    "source_name": "Internal Curated Knowledge Bank",
+    "source_url": "",
+    "tags": ["system-design", "scalability", "architecture"]
+  },
+  {
+    "skill": "General Software Engineering",
+    "topic": "Code Quality and Clean Code",
+    "difficulty": "intermediate",
+    "concepts": ["SOLID principles", "DRY", "KISS", "separation of concerns", "naming conventions", "code reviews", "refactoring"],
+    "question_types": ["conceptual", "practical", "scenario"],
+    "common_mistakes": ["premature optimisation", "ignoring readability", "not documenting complex logic"],
+    "source_name": "Internal Curated Knowledge Bank",
+    "source_url": "",
+    "tags": ["clean-code", "SOLID", "refactoring"]
+  },
+  {
+    "skill": "General Software Engineering",
+    "topic": "API Design Principles",
+    "difficulty": "intermediate",
+    "concepts": ["REST principles", "versioning", "pagination", "rate limiting", "idempotency", "status codes", "error responses"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["breaking changes without versioning", "non-idempotent PUT operations", "unclear error messages"],
+    "source_name": "Internal Curated Knowledge Bank",
+    "source_url": "",
+    "tags": ["API-design", "REST", "versioning"]
+  },
+  {
+    "skill": "General Software Engineering",
+    "topic": "Testing Strategies",
+    "difficulty": "intermediate",
+    "concepts": ["unit testing", "integration testing", "end-to-end testing", "test pyramid", "TDD", "mocking", "code coverage"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["testing implementation not behaviour", "over-mocking", "no test isolation"],
+    "source_name": "Internal Curated Knowledge Bank",
+    "source_url": "",
+    "tags": ["testing", "TDD", "test-pyramid"]
+  },
+  {
+    "skill": "General Software Engineering",
+    "topic": "Data Structures and Algorithms",
+    "difficulty": "intermediate",
+    "concepts": ["time and space complexity", "arrays, hashmaps, trees, graphs", "sorting algorithms", "dynamic programming", "sliding window", "BFS/DFS"],
+    "question_types": ["conceptual", "practical", "advanced"],
+    "common_mistakes": ["O(n²) where O(n) is possible", "not considering edge cases", "ignoring space complexity"],
+    "source_name": "Internal Curated Knowledge Bank",
+    "source_url": "",
+    "tags": ["algorithms", "data-structures", "complexity"]
+  },
+  {
+    "skill": "General Software Engineering",
+    "topic": "DevOps and CI/CD",
+    "difficulty": "intermediate",
+    "concepts": ["CI/CD pipeline", "automated testing in CI", "deployment strategies (blue/green, canary)", "IaC", "monitoring and alerting", "rollback strategies"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["deploying without tests", "no rollback plan", "manual production deployments"],
+    "source_name": "Internal Curated Knowledge Bank",
+    "source_url": "",
+    "tags": ["DevOps", "CI/CD", "deployment"]
+  }
+]

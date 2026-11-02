@@ -1,0 +1,46 @@
+[
+  {
+    "skill": "Java",
+    "topic": "OOP and Core Java Principles",
+    "difficulty": "beginner",
+    "concepts": ["Encapsulation", "Inheritance", "Polymorphism", "Abstraction", "Interface vs Abstract Class"],
+    "question_types": ["conceptual", "practical"],
+    "common_mistakes": ["Violating encapsulation with public mutable fields", "Confusing method overloading and overriding", "Improper use of super() constructor"],
+    "source_name": "Oracle Java Documentation",
+    "source_url": "https://docs.oracle.com/javase/tutorial/java/concepts/",
+    "tags": ["oop", "core-java", "classes"]
+  },
+  {
+    "skill": "Java",
+    "topic": "Collections Framework",
+    "difficulty": "intermediate",
+    "concepts": ["List vs Set vs Map", "HashMap internal working", "ArrayList vs LinkedList", "ConcurrentHashMap", "Comparable and Comparator"],
+    "question_types": ["conceptual", "practical", "debugging"],
+    "common_mistakes": ["Mutating keys in a HashMap", "Ignoring equals() and hashCode() contract", "Using Vector or Hashtable in modern code"],
+    "source_name": "Oracle Java Collections Guide",
+    "source_url": "https://docs.oracle.com/javase/8/docs/technotes/guides/collections/",
+    "tags": ["collections", "hashmap", "data-structures"]
+  },
+  {
+    "skill": "Java",
+    "topic": "Concurrency and Multithreading",
+    "difficulty": "advanced",
+    "concepts": ["Thread lifecycle", "synchronized keyword", "volatile variable", "ExecutorService", "Lock API and ReentrantLock", "Deadlock prevention"],
+    "question_types": ["conceptual", "practical", "debugging", "scenario"],
+    "common_mistakes": ["Calling run() instead of start()", "Race conditions from un-synchronized state", "Ignoring InterruptedException", "Deadlocks from lock ordering"],
+    "source_name": "Oracle Java Concurrency Trail",
+    "source_url": "https://docs.oracle.com/javase/tutorial/essential/concurrency/",
+    "tags": ["concurrency", "threads", "multithreading", "executors"]
+  },
+  {
+    "skill": "Java",
+    "topic": "JVM Internals and Garbage Collection",
+    "difficulty": "advanced",
+    "concepts": ["Heap vs Stack memory", "Garbage Collection algorithms (G1, ZGC)", "Classloader hierarchy", "Memory Leaks in Java", "JIT compilation"],
+    "question_types": ["conceptual", "debugging", "scenario"],
+    "common_mistakes": ["Creating unclosed static collections leading to memory leaks", "Over-tuning JVM flags prematurely", "Confusing OutOfMemoryError types"],
+    "source_name": "Oracle HotSpot Virtual Machine Guide",
+    "source_url": "https://docs.oracle.com/en/java/javase/17/gctuning/",
+    "tags": ["jvm", "gc", "memory", "performance"]
+  }
+]

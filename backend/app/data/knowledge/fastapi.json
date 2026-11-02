@@ -1,0 +1,68 @@
+[
+  {
+    "skill": "FastAPI",
+    "topic": "Path Operations and Routing",
+    "difficulty": "beginner",
+    "concepts": ["@app.get/post/put/delete", "path parameters", "query parameters", "request body", "APIRouter", "tags and prefixes"],
+    "question_types": ["practical", "conceptual"],
+    "common_mistakes": ["shadowed route order", "not using APIRouter for large apps", "missing status_code on create operations"],
+    "source_name": "FastAPI Official Documentation",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/first-steps/",
+    "tags": ["routing", "path-operations", "REST"]
+  },
+  {
+    "skill": "FastAPI",
+    "topic": "Pydantic Models and Validation",
+    "difficulty": "beginner",
+    "concepts": ["BaseModel", "field validation", "validators", "Field()", "nested models", "model_config", "JSON schema generation"],
+    "question_types": ["practical", "debugging"],
+    "common_mistakes": ["mutable default values in models", "forgetting Optional for nullable fields", "not using Annotated + Field for complex validation"],
+    "source_name": "FastAPI Official Documentation",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/body/",
+    "tags": ["pydantic", "validation", "models"]
+  },
+  {
+    "skill": "FastAPI",
+    "topic": "Dependency Injection",
+    "difficulty": "intermediate",
+    "concepts": ["Depends()", "dependency chain", "database session injection", "security dependencies", "request scoped vs singleton", "override in tests"],
+    "question_types": ["conceptual", "practical", "scenario"],
+    "common_mistakes": ["creating DB sessions without context manager", "not overriding dependencies in tests", "heavy logic in endpoint vs dependency"],
+    "source_name": "FastAPI Official Documentation",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/dependencies/",
+    "tags": ["dependency-injection", "Depends", "testing"]
+  },
+  {
+    "skill": "FastAPI",
+    "topic": "Authentication and Security",
+    "difficulty": "intermediate",
+    "concepts": ["OAuth2PasswordBearer", "JWT tokens", "HTTPBasic", "API key header", "password hashing with passlib", "token expiry"],
+    "question_types": ["scenario", "practical"],
+    "common_mistakes": ["hardcoding secret keys", "not validating token expiry", "returning too much user info in token payload"],
+    "source_name": "FastAPI Official Documentation",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/security/",
+    "tags": ["authentication", "JWT", "OAuth2", "security"]
+  },
+  {
+    "skill": "FastAPI",
+    "topic": "Async Operations and Performance",
+    "difficulty": "advanced",
+    "concepts": ["async def vs def", "asyncio with SQLAlchemy", "background tasks", "concurrent request handling", "WebSockets", "streaming responses"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["blocking async routes with sync I/O", "using sync SQLAlchemy in async context", "misunderstanding when def vs async def matters in FastAPI"],
+    "source_name": "FastAPI Official Documentation",
+    "source_url": "https://fastapi.tiangolo.com/async/",
+    "tags": ["async", "performance", "concurrency", "websockets"]
+  },
+  {
+    "skill": "FastAPI",
+    "topic": "Error Handling and HTTP Exceptions",
+    "difficulty": "intermediate",
+    "concepts": ["HTTPException", "exception handlers", "RequestValidationError", "custom error responses", "422 Unprocessable Entity", "status codes"],
+    "question_types": ["practical", "debugging"],
+    "common_mistakes": ["raising generic 500 instead of specific codes", "not handling validation errors", "exposing internal stack traces in production"],
+    "source_name": "FastAPI Official Documentation",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/handling-errors/",
+    "tags": ["error-handling", "HTTP-exceptions", "validation"]
+  }
+]

@@ -4,7 +4,8 @@ dist/
 dist-ssr/
 *.local
 .env
-.env.production
+.env.*
+!.env.example
 .eslintcache
 
 # Python/FastAPI dependencies
@@ -16,7 +17,6 @@ __pycache__/
 env/
 venv/
 ENV/
-.env
 .venv
 pip-log.txt
 pip-delete-this-directory.txt
@@ -25,9 +25,11 @@ pip-delete-this-directory.txt
 htmlcov/
 .mypy_cache/
 
-# Databases
+# Databases & Mounted Data
 *.db
 *.sqlite
+data/
+backend_data/
 
 # IDEs and OS files
 .vscode/

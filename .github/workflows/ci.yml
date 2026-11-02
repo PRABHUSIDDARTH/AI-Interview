@@ -71,8 +71,15 @@ jobs:
           sys.exit(1)
           "
 
+      - name: Validate Docker Compose Configuration
+        run: docker compose config
+
+      - name: Build Docker Images
+        run: docker compose build
+
       - name: Run End-to-End Regression Suite
         env:
           AI_PROVIDER: mock
           PYTHONIOENCODING: utf-8
         run: python regression_test.py
+

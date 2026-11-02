@@ -1,14 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-emerald-500/30 selection:text-white;
+    background-color: #120907;
+    color: #F8FAFC;
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    selection-background-color: rgba(108, 99, 255, 0.3);
+    selection-color: #FFFFFF;
+  }
+
+  /* Custom clean dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #070A12;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 99, 255, 0.4);
   }
 }
 
-/* Custom scrollbar and premium glassmorphism styling variables */
-:root {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+@layer components {
+  /* Glass card styling */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.4);
+  }
+
+  .glass-panel-interactive {
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-panel-interactive:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(108, 99, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -15px rgba(108, 99, 255, 0.15);
+  }
+
+  .glass-card-active {
+    background: rgba(108, 99, 255, 0.08);
+    border-color: rgba(108, 99, 255, 0.4);
+    box-shadow: 0 0 25px -5px rgba(108, 99, 255, 0.25);
+  }
+
+  /* Form Inputs */
+  .glass-input {
+    background: rgba(11, 16, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: #F8FAFC;
+    transition: all 0.2s ease;
+  }
+
+  .glass-input:focus {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: #6C63FF;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+  }
+
+  .glass-input::placeholder {
+    color: #64748B;
+  }
+
+  /* Glowing Primary Button */
+  .btn-primary {
+    background: linear-gradient(135deg, #6C63FF 0%, #4F46E5 100%);
+    color: #FFFFFF;
+    font-weight: 600;
+    box-shadow: 0 4px 20px -2px rgba(108, 99, 255, 0.4);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7B73FF 0%, #5E56E8 100%);
+    box-shadow: 0 6px 25px 0px rgba(108, 99, 255, 0.55);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #E2E8F0;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+  }
+
+  .btn-cyan {
+    background: linear-gradient(135deg, #06B6D4 0%, #0284C7 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 20px -2px rgba(6, 182, 212, 0.35);
+  }
+
+  .btn-cyan:hover:not(:disabled) {
+    box-shadow: 0 6px 25px 0px rgba(6, 182, 212, 0.5);
+    transform: translateY(-1px);
+  }
+
+  /* Subtle Ambient Background Gradients */
+  .bg-radial-ambient {
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(108, 99, 255, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(34, 211, 238, 0.06) 0%, transparent 35%),
+      radial-gradient(circle at 50% 80%, rgba(108, 99, 255, 0.04) 0%, transparent 50%);
+  }
+
+  .bg-grid-pattern {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  }
 }

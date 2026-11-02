@@ -1,0 +1,68 @@
+[
+  {
+    "skill": "AWS",
+    "topic": "Core Compute — EC2 and Lambda",
+    "difficulty": "intermediate",
+    "concepts": ["EC2 instance types", "AMI", "security groups", "Lambda functions", "serverless vs server-based", "cold starts", "Lambda layers", "event sources"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["over-provisioning EC2", "Lambda timeout configuration", "synchronous Lambda calls where async fits better"],
+    "source_name": "AWS Official Documentation",
+    "source_url": "https://docs.aws.amazon.com/ec2/ and https://docs.aws.amazon.com/lambda/",
+    "tags": ["EC2", "Lambda", "serverless", "compute"]
+  },
+  {
+    "skill": "AWS",
+    "topic": "Storage — S3 and EBS",
+    "difficulty": "beginner",
+    "concepts": ["S3 buckets and objects", "storage classes", "versioning", "lifecycle policies", "presigned URLs", "EBS vs EFS vs S3", "bucket policies"],
+    "question_types": ["practical", "scenario"],
+    "common_mistakes": ["public S3 bucket exposure", "not enabling versioning", "wrong storage class for access pattern"],
+    "source_name": "AWS Official Documentation",
+    "source_url": "https://docs.aws.amazon.com/s3/",
+    "tags": ["S3", "EBS", "storage", "object-storage"]
+  },
+  {
+    "skill": "AWS",
+    "topic": "Networking — VPC, Subnets, and Security Groups",
+    "difficulty": "intermediate",
+    "concepts": ["VPC CIDR", "public vs private subnets", "internet gateway", "NAT gateway", "security groups vs NACLs", "route tables", "peering"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["putting all resources in public subnet", "overly permissive security groups (0.0.0.0/0)", "not understanding stateful vs stateless rules"],
+    "source_name": "AWS Official Documentation",
+    "source_url": "https://docs.aws.amazon.com/vpc/",
+    "tags": ["VPC", "networking", "security-groups", "subnets"]
+  },
+  {
+    "skill": "AWS",
+    "topic": "IAM and Security",
+    "difficulty": "intermediate",
+    "concepts": ["IAM users, roles, policies", "principle of least privilege", "assume role", "instance profiles", "STS", "resource-based vs identity-based policies"],
+    "question_types": ["conceptual", "scenario", "advanced"],
+    "common_mistakes": ["using root account for operations", "broad * permissions", "not using roles (using long-term keys instead)"],
+    "source_name": "AWS Official Documentation",
+    "source_url": "https://docs.aws.amazon.com/iam/",
+    "tags": ["IAM", "security", "roles", "least-privilege"]
+  },
+  {
+    "skill": "AWS",
+    "topic": "RDS and Database Services",
+    "difficulty": "intermediate",
+    "concepts": ["RDS managed databases", "Multi-AZ deployment", "read replicas", "Aurora", "DynamoDB", "ElastiCache", "connection pooling (RDS Proxy)"],
+    "question_types": ["conceptual", "scenario"],
+    "common_mistakes": ["single-AZ RDS in production", "not using RDS Proxy for Lambda connections", "ignoring DynamoDB capacity modes"],
+    "source_name": "AWS Official Documentation",
+    "source_url": "https://docs.aws.amazon.com/rds/",
+    "tags": ["RDS", "Aurora", "DynamoDB", "database"]
+  },
+  {
+    "skill": "AWS",
+    "topic": "Scaling and High Availability",
+    "difficulty": "advanced",
+    "concepts": ["Auto Scaling groups", "load balancers (ALB, NLB)", "target groups", "health checks", "CloudFront CDN", "Route 53 failover"],
+    "question_types": ["scenario", "advanced"],
+    "common_mistakes": ["not setting minimum capacity in ASG", "unhealthy health check thresholds", "no cross-AZ load balancing"],
+    "source_name": "AWS Official Documentation",
+    "source_url": "https://docs.aws.amazon.com/autoscaling/",
+    "tags": ["auto-scaling", "load-balancing", "high-availability", "CDN"]
+  }
+]
