@@ -422,4 +422,10 @@ docker compose up -d
 | **CORS policy error in browser console** | Frontend origin missing from backend CORS list | Add frontend origin (e.g. `http://localhost:3000`) to `CORS_ORIGINS` in `.env`. |
 | **Microphone speech-to-text not capturing** | Browser permission denied or HTTP origin | Grant microphone permissions in browser settings. Note that Web Speech API requires HTTPS or `localhost`. |
 | **Database missing column errors** | Schema updated between code versions | Backend automatically runs `run_auto_migrations(engine)` on startup. Alternatively, run `python backend/migrate_db.py`. |
-| **AI Question generation fallback to mock** | Invalid or missing `AI_API_KEY` | Set `AI_PROVIDER=gemini` and valid `AI_API_KEY` in `.env`. If key fails, system gracefully falls back to mock questions without crashing. |
+| **AI Question generation fallback to mock** | Invalid or missing `AI_API_KEY`, or an `AI_MODEL` your key can't use | Set `AI_PROVIDER=gemini`, a valid `AI_API_KEY`, and a valid `AI_MODEL` (or leave it empty for the default) in `.env`. Check `GET /health` (the `ai` field) and look for `Falling back to mock output` in the backend log, which includes the HTTP status. |
+
+---
+
+## License
+
+This project is licensed under the [Apache License 2.0](LICENSE).
