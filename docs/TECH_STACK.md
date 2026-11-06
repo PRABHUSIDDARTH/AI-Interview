@@ -89,7 +89,7 @@ A comprehensive technical inventory documenting every technology, framework, lib
 ## 4. AI & Hybrid RAG Layer
 
 ### Multi-Provider LLM Client (`app/services/ai.py`)
-- **WHAT:** Abstract AI service supporting Google Gemini (`gemini-1.5-flash`), OpenAI (`gpt-4o`/`gpt-3.5-turbo`), and `MockProvider`.
+- **WHAT:** Abstract AI service supporting Google Gemini (`gemini-2.5-flash` by default), OpenAI (`gpt-4o-mini` by default; override either with `AI_MODEL`), and `MockProvider`.
 - **WHY:** Guarantees platform availability even if external AI provider credentials expire, hit rate limits, or suffer network timeouts.
 - **WHERE USED:** `backend/app/services/ai.py`.
 

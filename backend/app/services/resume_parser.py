@@ -161,7 +161,7 @@ class ResumeParserService:
         years_exp = self._extract_years_experience(text)
 
         # AI enhancement if configured
-        if self.ai_provider.provider_name in ("gemini", "openai"):
+        if self.ai_provider.is_real_llm:
             try:
                 ai_profile = self._ai_extract_profile(text)
                 if ai_profile:
@@ -313,13 +313,10 @@ class ResumeParserService:
             f"}}\n"
         )
 
-        if self.ai_provider.provider_name == "gemini":
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={self.ai_provider.api_key}"
-            headers = {"Content-Type": "application/json"}
-            body = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"responseMimeType": "application/json"}
-            }
-            res = self.ai_provider._post_request(url, body, headers)
-            return json.loads(res)
-        return None
+        if not self.ai_provider.is_real_llm:
+            return None
+        return self.ai_provider._call_llm_json(
+            prompt,
+            system="You extract structured data from resumes. Only report what is explicitly in the text. Return JSON only.",
+            timeout=20,
+        )

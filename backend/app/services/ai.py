@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import requests
+from functools import lru_cache
 from typing import List, Dict, Any, Optional, Tuple
 from pydantic import BaseModel, Field
 
@@ -10,6 +11,24 @@ logger = logging.getLogger("uvicorn.error")
 class AIConfigError(Exception):
     """Raised when AI provider is not properly configured."""
     pass
+
+
+class AIProviderError(Exception):
+    """Raised when a real LLM call fails (network, HTTP status, or malformed response).
+
+    Messages are redacted: they never contain the API key.
+    """
+    pass
+
+
+# Default model per provider, used when AI_MODEL is unset or clearly belongs to another provider.
+DEFAULT_MODELS = {
+    "gemini": "gemini-2.5-flash",
+    "openai": "gpt-4o-mini",
+}
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models"
+OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
+MAX_CHAT_HISTORY_MESSAGES = 10
 
 class QuestionDTO(BaseModel):
     text: str = Field(..., description="The interview question text")
@@ -38,7 +57,9 @@ class AIProvider:
     """Modular AI provider abstraction.
 
     Reads configuration from app settings (or environment variables).
-    Supports Gemini and OpenAI, with explicit error propagation when real AI fails.
+    Supports Gemini and OpenAI. All real LLM traffic goes through `_call_llm`;
+    public methods catch failures and fall back to the deterministic mock logic,
+    logging a redacted warning each time they do.
     """
 
     def __init__(self) -> None:
@@ -49,16 +70,148 @@ class AIProvider:
         from app.services.adaptive_engine import AdaptiveDecisionEngine
         self.decision_engine = AdaptiveDecisionEngine()
 
-        if self.provider_name in ("openai", "gemini"):
+        if self.provider_name in DEFAULT_MODELS:
             if not self.api_key:
                 logger.warning(
-                    f"AI provider is set to '{self.provider_name}' but AI_API_KEY is not configured."
+                    "AI provider is set to '%s' but AI_API_KEY is not configured. "
+                    "Every AI call will fall back to mock output.",
+                    self.provider_name,
                 )
         elif self.provider_name != "mock":
             logger.warning(
-                f"AI provider '{self.provider_name}' is not recognized. Falling back to mock provider."
+                "AI provider '%s' is not recognized. Falling back to mock provider.",
+                self.provider_name,
             )
             self.provider_name = "mock"
+
+        self.model = self._resolve_model(settings.AI_MODEL or os.getenv("AI_MODEL"))
+
+    # --------------------- Shared LLM request helper ---------------------
+    def _resolve_model(self, configured: Optional[str]) -> Optional[str]:
+        """Pick the model for the active provider, honouring AI_MODEL unless it obviously
+        belongs to the other provider (e.g. AI_MODEL=gemini-* with AI_PROVIDER=openai)."""
+        default = DEFAULT_MODELS.get(self.provider_name)
+        if default is None:
+            return None
+        configured = (configured or "").strip()
+        if not configured:
+            return default
+        is_gemini_model = configured.lower().startswith(("gemini", "gemma"))
+        if (self.provider_name == "gemini") != is_gemini_model:
+            logger.warning(
+                "AI_MODEL '%s' does not look like a %s model; using default '%s'.",
+                configured, self.provider_name, default,
+            )
+            return default
+        return configured
+
+    @property
+    def is_real_llm(self) -> bool:
+        return self.provider_name in DEFAULT_MODELS
+
+    def _redact(self, text: str) -> str:
+        if self.api_key:
+            text = text.replace(self.api_key, "***")
+        return text
+
+    def _call_llm(
+        self,
+        prompt: str,
+        *,
+        system: Optional[str] = None,
+        json_mode: bool = True,
+        history: Optional[List[Dict[str, str]]] = None,
+        timeout: float = 15,
+    ) -> str:
+        """Send one prompt (plus optional system prompt and chat history) to the configured
+        provider and return the raw text reply.
+
+        Raises AIConfigError if no real provider/key is configured, and AIProviderError for
+        network, HTTP or response-shape failures. Neither error message contains the API key.
+        """
+        if not self.is_real_llm:
+            raise AIConfigError(f"No real LLM provider configured (AI_PROVIDER='{self.provider_name}').")
+        if not self.api_key:
+            raise AIConfigError(f"AI provider is '{self.provider_name}' but AI_API_KEY is not configured.")
+
+        turns = [
+            (m.get("role", "user"), m.get("content", ""))
+            for m in (history or [])[-MAX_CHAT_HISTORY_MESSAGES:]
+            if isinstance(m, dict) and m.get("content")
+        ]
+
+        if self.provider_name == "gemini":
+            # Key goes in a header, never in the URL, so it can't leak via error messages or logs.
+            url = f"{GEMINI_BASE_URL}/{self.model}:generateContent"
+            headers = {"Content-Type": "application/json", "x-goog-api-key": self.api_key}
+            contents = [
+                {"role": "model" if role == "assistant" else "user", "parts": [{"text": text}]}
+                for role, text in turns
+            ]
+            contents.append({"role": "user", "parts": [{"text": prompt}]})
+            body: Dict[str, Any] = {"contents": contents}
+            if system:
+                body["systemInstruction"] = {"parts": [{"text": system}]}
+            if json_mode:
+                body["generationConfig"] = {"responseMimeType": "application/json"}
+
+            def extract(data: Dict[str, Any]) -> str:
+                return data["candidates"][0]["content"]["parts"][0]["text"]
+        else:  # openai
+            url = OPENAI_CHAT_URL
+            headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self.api_key}"}
+            messages = [{"role": "system", "content": system}] if system else []
+            messages += [
+                {"role": "assistant" if role == "assistant" else "user", "content": text}
+                for role, text in turns
+            ]
+            messages.append({"role": "user", "content": prompt})
+            body = {"model": self.model, "messages": messages}
+            if json_mode:
+                body["response_format"] = {"type": "json_object"}
+
+            def extract(data: Dict[str, Any]) -> str:
+                return data["choices"][0]["message"]["content"]
+
+        try:
+            res = requests.post(url, json=body, headers=headers, timeout=timeout)
+        except requests.RequestException as e:
+            raise AIProviderError(
+                self._redact(f"{self.provider_name} request failed: {type(e).__name__}: {e}")
+            ) from None
+
+        if res.status_code >= 400:
+            raise AIProviderError(
+                self._redact(f"{self.provider_name} returned HTTP {res.status_code}: {res.text[:300]}")
+            )
+
+        try:
+            text = extract(res.json())
+        except (ValueError, KeyError, IndexError, TypeError):
+            raise AIProviderError(
+                self._redact(f"{self.provider_name} returned an unexpected response: {res.text[:300]}")
+            ) from None
+        if not isinstance(text, str) or not text.strip():
+            raise AIProviderError(f"{self.provider_name} returned an empty response.")
+        return text
+
+    def _call_llm_json(self, prompt: str, **kwargs: Any) -> Dict[str, Any]:
+        """Like `_call_llm` but in JSON mode, returning the parsed JSON object."""
+        text = self._call_llm(prompt, json_mode=True, **kwargs)
+        try:
+            parsed = json.loads(text)
+        except json.JSONDecodeError:
+            raise AIProviderError(f"{self.provider_name} returned invalid JSON: {text[:200]}") from None
+        if not isinstance(parsed, dict):
+            raise AIProviderError(f"{self.provider_name} returned JSON that is not an object.")
+        return parsed
+
+    def _log_fallback(self, operation: str, error: Exception) -> None:
+        """One consistent, redacted log line whenever a real LLM call falls back to mock output."""
+        logger.warning(
+            "LLM %s failed (provider=%s, model=%s): %s. Falling back to mock output.",
+            operation, self.provider_name, self.model, self._redact(str(error)),
+        )
 
     # --------------------- Question Generation ---------------------
     def generate_question(self, setup: Dict[str, Any], history: List[Dict[str, Any]]) -> QuestionDTO:
@@ -192,46 +345,20 @@ class AIProvider:
         if context_section:
             prompt = context_section + prompt
 
-        if self.provider_name in ("gemini", "openai") and not self.api_key:
+        if self.is_real_llm and not self.api_key:
             raise AIConfigError(f"AI provider is set to '{self.provider_name}' but AI_API_KEY is not configured in backend/.env.")
 
         def _call_ai(prompt_text: str) -> List[str]:
             try:
-                if self.provider_name == "gemini":
-                    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={self.api_key}"
-                    headers = {"Content-Type": "application/json"}
-                    body = {
-                        "contents": [{"parts": [{"text": prompt_text}]}],
-                        "generationConfig": {"responseMimeType": "application/json"}
-                    }
-                    res = requests.post(url, json=body, headers=headers, timeout=15)
-                    res.raise_for_status()
-                    data = res.json()
-                    text = data["candidates"][0]["content"]["parts"][0]["text"]
-                    parsed = json.loads(text)
-                    return parsed.get("questions", [])
-                elif self.provider_name == "openai":
-                    url = "https://api.openai.com/v1/chat/completions"
-                    headers = {
-                        "Content-Type": "application/json",
-                        "Authorization": f"Bearer {self.api_key}"
-                    }
-                    body = {
-                        "model": "gpt-4o-mini",
-                        "messages": [
-                            {"role": "system", "content": "You are a professional technical interviewer who strictly follows skill focus constraints. Return JSON only."},
-                            {"role": "user", "content": prompt_text}
-                        ],
-                        "response_format": {"type": "json_object"}
-                    }
-                    res = requests.post(url, json=body, headers=headers, timeout=15)
-                    res.raise_for_status()
-                    data = res.json()
-                    text = data["choices"][0]["message"]["content"]
-                    parsed = json.loads(text)
-                    return parsed.get("questions", [])
+                parsed = self._call_llm_json(
+                    prompt_text,
+                    system="You are a professional technical interviewer who strictly follows skill focus constraints. Return JSON only.",
+                )
+                questions = parsed.get("questions", [])
+                if isinstance(questions, list):
+                    return [q for q in questions if isinstance(q, str) and q.strip()]
             except Exception as e:
-                logger.error("AI question generation failed: %s", str(e), exc_info=True)
+                self._log_fallback("question generation", e)
             return []
 
         questions = _call_ai(prompt)
@@ -691,50 +818,19 @@ class AIProvider:
         )
 
         try:
-            if self.provider_name == "gemini":
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={self.api_key}"
-                headers = {"Content-Type": "application/json"}
-                body = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {"responseMimeType": "application/json"}
-                }
-                res = requests.post(url, json=body, headers=headers, timeout=15)
-                res.raise_for_status()
-                data = res.json()
-                text = data["candidates"][0]["content"]["parts"][0]["text"]
-                parsed = json.loads(text)
-                q = parsed.get("question")
-                if q:
-                    # Validate
-                    val, _ = self._validate_skill_focus([q], focus_skills)
-                    if val:
-                        return q
-            elif self.provider_name == "openai":
-                url = "https://api.openai.com/v1/chat/completions"
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                }
-                body = {
-                    "model": "gpt-4o-mini",
-                    "messages": [
-                        {"role": "system", "content": "You are a professional adaptive technical interviewer. Return JSON only."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "response_format": {"type": "json_object"}
-                }
-                res = requests.post(url, json=body, headers=headers, timeout=15)
-                res.raise_for_status()
-                data = res.json()
-                text = data["choices"][0]["message"]["content"]
-                parsed = json.loads(text)
-                q = parsed.get("question")
-                if q:
-                    val, _ = self._validate_skill_focus([q], focus_skills)
-                    if val:
-                        return q
+            parsed = self._call_llm_json(
+                prompt,
+                system="You are a professional adaptive technical interviewer. Return JSON only.",
+            )
+            q = parsed.get("question")
+            if not isinstance(q, str) or not q.strip():
+                raise AIProviderError("response JSON has no 'question' string")
+            val, _ = self._validate_skill_focus([q], focus_skills)
+            if not val:
+                raise AIProviderError(f"generated question is not about the selected skills: {q[:120]}")
+            return q
         except Exception as e:
-            logger.error("AI adaptive question generation failed: %s", str(e), exc_info=True)
+            self._log_fallback("adaptive question generation", e)
 
         return self._generate_mock_adaptive_question(
             setup=setup,
@@ -998,57 +1094,19 @@ class AIProvider:
         )
 
         try:
-            if self.provider_name == "gemini":
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={self.api_key}"
-                headers = {"Content-Type": "application/json"}
-                body = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {
-                        "responseMimeType": "application/json"
-                    }
-                }
-                res = requests.post(url, json=body, headers=headers, timeout=15)
-                res.raise_for_status()
-                data = res.json()
-                text = data["candidates"][0]["content"]["parts"][0]["text"]
-                parsed = json.loads(text)
-                dto = EvaluationDTO(**parsed)
-                # Code-enforced Hard Relevance Gate
-                if dto.relevance < 0.4:
-                    dto.score = min(dto.score, 2)
-                if dto.correctness <= 0.3:
-                    dto.score = min(dto.score, 3)
-                return dto
-
-            elif self.provider_name == "openai":
-                url = "https://api.openai.com/v1/chat/completions"
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                }
-                body = {
-                    "model": "gpt-4o-mini",
-                    "messages": [
-                        {"role": "system", "content": "You are a professional technical interviewer enforcing a strict relevance gate. Return JSON only."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "response_format": {"type": "json_object"}
-                }
-                res = requests.post(url, json=body, headers=headers, timeout=15)
-                res.raise_for_status()
-                data = res.json()
-                text = data["choices"][0]["message"]["content"]
-                parsed = json.loads(text)
-                dto = EvaluationDTO(**parsed)
-                # Code-enforced Hard Relevance Gate
-                if dto.relevance < 0.4:
-                    dto.score = min(dto.score, 2)
-                if dto.correctness <= 0.3:
-                    dto.score = min(dto.score, 3)
-                return dto
-
+            parsed = self._call_llm_json(
+                prompt,
+                system="You are a professional technical interviewer enforcing a strict relevance gate. Return JSON only.",
+            )
+            dto = EvaluationDTO(**parsed)
+            # Code-enforced Hard Relevance Gate
+            if dto.relevance < 0.4:
+                dto.score = min(dto.score, 2)
+            if dto.correctness <= 0.3:
+                dto.score = min(dto.score, 3)
+            return dto
         except Exception as e:
-            logger.error("AI answer evaluation failed: %s. Falling back to mock evaluation.", str(e), exc_info=True)
+            self._log_fallback("answer evaluation", e)
 
         return self._mock_evaluation(
             question,
@@ -1329,42 +1387,14 @@ class AIProvider:
         )
 
         try:
-            if self.provider_name == "gemini":
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={self.api_key}"
-                headers = {"Content-Type": "application/json"}
-                body = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {"responseMimeType": "application/json"}
-                }
-                res = requests.post(url, json=body, headers=headers, timeout=20)
-                res.raise_for_status()
-                data = res.json()
-                text = data["candidates"][0]["content"]["parts"][0]["text"]
-                parsed = json.loads(text)
-                return AICoachResponse(**parsed)
-
-            elif self.provider_name == "openai":
-                url = "https://api.openai.com/v1/chat/completions"
-                headers = {
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                }
-                body = {
-                    "model": "gpt-4o-mini",
-                    "messages": [
-                        {"role": "system", "content": "You are an expert AI interview coach. Ground recommendations strictly in user data. Return JSON only."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "response_format": {"type": "json_object"}
-                }
-                res = requests.post(url, json=body, headers=headers, timeout=20)
-                res.raise_for_status()
-                data = res.json()
-                text = data["choices"][0]["message"]["content"]
-                parsed = json.loads(text)
-                return AICoachResponse(**parsed)
+            parsed = self._call_llm_json(
+                prompt,
+                system="You are an expert AI interview coach. Ground recommendations strictly in user data. Return JSON only.",
+                timeout=20,
+            )
+            return AICoachResponse(**parsed)
         except Exception as e:
-            logger.error("AI coaching generation failed: %s. Falling back to mock coaching.", str(e), exc_info=True)
+            self._log_fallback("coaching generation", e)
 
         return self._mock_coaching(context)
 
@@ -1416,34 +1446,42 @@ class AIProvider:
             f"Instructions: Answer concisely, encouragingly, and actionably. Ground claims in their scores."
         )
 
+        # The frontend sends the current message as the last history entry; the prompt already
+        # contains it, so drop that entry to avoid sending it twice.
+        prior_turns = list(chat_history or [])
+        if (
+            prior_turns
+            and isinstance(prior_turns[-1], dict)
+            and prior_turns[-1].get("role") == "user"
+            and (prior_turns[-1].get("content") or "").strip() == user_message.strip()
+        ):
+            prior_turns = prior_turns[:-1]
+
         try:
-            if self.provider_name == "gemini":
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={self.api_key}"
-                headers = {"Content-Type": "application/json"}
-                body = {"contents": [{"parts": [{"text": prompt}]}]}
-                res = requests.post(url, json=body, headers=headers, timeout=20)
-                res.raise_for_status()
-                data = res.json()
-                return data["candidates"][0]["content"]["parts"][0]["text"]
-            elif self.provider_name == "openai":
-                url = "https://api.openai.com/v1/chat/completions"
-                headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self.api_key}"}
-                body = {
-                    "model": "gpt-4o-mini",
-                    "messages": [
-                        {"role": "system", "content": "You are an expert AI interview coach grounded strictly in candidate metrics."},
-                        {"role": "user", "content": prompt}
-                    ]
-                }
-                res = requests.post(url, json=body, headers=headers, timeout=20)
-                res.raise_for_status()
-                data = res.json()
-                return data["choices"][0]["message"]["content"]
+            return self._call_llm(
+                prompt,
+                system="You are an expert AI interview coach grounded strictly in candidate metrics.",
+                json_mode=False,
+                history=prior_turns,
+                timeout=20,
+            )
         except Exception as e:
-            logger.error("LLM coach chat failed: %s", str(e))
+            self._log_fallback("coach chat", e)
 
         weak_topics = context.get("weak_topics", [])
         weak_str = weak_topics[0]["topic"] if weak_topics else "technical concepts"
         return f"Based on your recent scores, focusing on {weak_str} will deliver the highest improvement in your interviews."
 
 
+
+
+@lru_cache(maxsize=1)
+def ai_status() -> Dict[str, Any]:
+    """Non-secret summary of the active LLM configuration (for /health). Cached: settings are
+    read once at startup, so this also avoids re-logging config warnings on every health check."""
+    provider = AIProvider()
+    return {
+        "provider": provider.provider_name,
+        "model": provider.model,
+        "api_key_configured": bool(provider.api_key) if provider.is_real_llm else None,
+    }

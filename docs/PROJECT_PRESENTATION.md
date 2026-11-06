@@ -82,7 +82,7 @@ Using an offline **Hybrid RAG Knowledge Retrieval Engine** (`LocalKnowledgeRetri
 - **Backend:** FastAPI, Python 3.11, Pydantic v2, SQLAlchemy ORM, Uvicorn ASGI Server.
 - **Authentication:** JWT tokens (`python-jose`), password hashing (`passlib` with `bcrypt`).
 - **Resume Processing:** `pdfminer.six` PDF text extraction.
-- **AI Infrastructure:** Multi-provider adapter supporting Google Gemini (`gemini-1.5-flash`), OpenAI (`gpt-4o`/`gpt-3.5-turbo`), and offline `MockProvider`.
+- **AI Infrastructure:** Multi-provider adapter supporting Google Gemini (`gemini-2.5-flash` by default), OpenAI (`gpt-4o-mini` by default; override either with `AI_MODEL`), and offline `MockProvider`.
 - **Knowledge RAG:** `LocalKnowledgeRetriever` with 15 domain knowledge modules.
 - **Containerization:** Multi-stage Dockerfiles (`backend/Dockerfile`, `frontend/Dockerfile`), Nginx production static serving (`nginx.conf`), Docker Compose (`docker-compose.yml`).
 

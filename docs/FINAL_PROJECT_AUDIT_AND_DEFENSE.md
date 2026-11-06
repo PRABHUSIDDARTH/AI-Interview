@@ -10,7 +10,7 @@ The codebase was inspected across all directories:
 - **Frontend (`frontend/src`)**: Single Page Application built with React 18, Vite, Tailwind CSS, Recharts, Lucide Icons, Axios, `html2canvas`, `jspdf`, and Web Speech API (`webkitSpeechRecognition`, `window.speechSynthesis`).
 - **Backend (`backend/app`)**: FastAPI asynchronous web server, Pydantic v2 validation schemas, SQLAlchemy ORM, Uvicorn server launcher.
 - **Database (`backend/app/models`, `core`)**: SQLAlchemy ORM mapping `User` and `InterviewSession` entities. SQLite (`sql_app.db`) default with PostgreSQL support. Idempotent auto-migrations (`app/core/migration.py`).
-- **AI Infrastructure (`backend/app/services/ai.py`)**: Provider abstraction adapter supporting Google Gemini (`gemini-1.5-flash`), OpenAI (`gpt-4o`/`gpt-3.5-turbo`), and `MockProvider` fallback.
+- **AI Infrastructure (`backend/app/services/ai.py`)**: Provider abstraction adapter supporting Google Gemini (`gemini-2.5-flash` by default), OpenAI (`gpt-4o-mini` by default; override either with `AI_MODEL`), and `MockProvider` fallback.
 - **RAG & Knowledge Retrieval (`backend/app/services/knowledge`)**: `LocalKnowledgeRetriever` loading 15 domain JSON modules (`python.json`, `react.json`, `fastapi.json`, `postgresql.json`, `docker.json`, `javascript.json`, `nodejs.json`, `css.json`, `aws.json`, `git.json`, `java.json`, `mongodb.json`, `spring.json`, `typescript.json`, `_fallback.json`).
 - **Interview Engine & Adaptation (`backend/app/services/interview_engine.py`)**: Manages session creation, question batch generation, multi-dimensional evaluation aggregation, and real-time difficulty adaptation via `AdaptiveDecisionEngine`.
 - **Resume Processing (`backend/app/services/resume_parser.py`, `utils/pdf_extractor.py`)**: `pdfminer.six` PDF text parsing, skill extraction, and profile normalization.
@@ -105,7 +105,7 @@ Session complete when answered_count == question_count → Redirect to /intervie
 
 ## Phase 4 — AI Architecture Review
 
-- **Supported AI Providers:** Google Gemini (`gemini-1.5-flash`), OpenAI (`gpt-4o` / `gpt-3.5-turbo`), and `MockProvider` fallback.
+- **Supported AI Providers:** Google Gemini (`gemini-2.5-flash` by default), OpenAI (`gpt-4o-mini` by default; override either with `AI_MODEL`), and `MockProvider` fallback.
 - **Provider Switching:** Driven by `AI_PROVIDER` environment variable (`backend/app/services/ai.py`).
 - **Resilience & Fallback:** If `AI_PROVIDER` is `gemini` or `openai` but network timeouts, quota limits, or missing API keys occur, `AIProvider` catches exceptions and seamlessly returns structured mock question templates without breaking the session flow.
 - **Prompt Engineering & Grounding:**
